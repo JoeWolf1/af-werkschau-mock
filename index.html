@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>AF Werkschau — 2026-05-16_18-56-20</title>
+<title>AF Werkschau — 2026-05-16_20-10-47</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1078,6 +1078,34 @@
     padding: 12px;
     border-top: 1px solid var(--cloud-sidebar-border-subtle);
   }
+  /* Social-media links row (above theme toggle / user info) */
+  .sidebar-social {
+    display: flex;
+    gap: 4px;
+    padding: 4px 0 8px;
+    border-bottom: 1px solid var(--cloud-sidebar-border-subtle);
+    margin-bottom: 8px;
+  }
+  .social-link {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    color: var(--cloud-sidebar-text-secondary);
+    text-decoration: none;
+    font-family: var(--cloud-font-body);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: -0.003em;
+    transition: all 0.15s var(--af-ease-out-soft);
+  }
+  .social-link:hover {
+    background: var(--cloud-sidebar-hover-bg);
+    color: var(--cloud-sidebar-text);
+  }
+  .social-link svg { flex-shrink: 0; }
   .sidebar-footer .footer-row {
     display: flex;
     align-items: center;
@@ -1500,6 +1528,34 @@
     </nav>
 
     <div class="sidebar-footer">
+      <!-- AF social — IG + Facebook brand icons -->
+      <div class="sidebar-social">
+        <a class="social-link social-ig" href="https://instagram.com/anfragenfluss" target="_blank" rel="noopener" aria-label="Anfragenfluss auf Instagram">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#FFDC80"/>
+                <stop offset="25%" stop-color="#FCAF45"/>
+                <stop offset="50%" stop-color="#F77737"/>
+                <stop offset="75%" stop-color="#E1306C"/>
+                <stop offset="100%" stop-color="#833AB4"/>
+              </linearGradient>
+            </defs>
+            <rect x="2.5" y="2.5" width="19" height="19" rx="5" fill="url(#ig-grad)"/>
+            <circle cx="12" cy="12" r="4.2" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+            <circle cx="17.5" cy="6.5" r="1.2" fill="#FFFFFF"/>
+          </svg>
+          <span>Instagram</span>
+        </a>
+        <a class="social-link social-fb" href="https://facebook.com/anfragenfluss" target="_blank" rel="noopener" aria-label="Anfragenfluss auf Facebook">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="5" fill="#1877F2"/>
+            <path d="M15.5 12.5h-2.5v8h-3.5v-8H8v-3h1.5V8c0-2 1-3.5 3.5-3.5h2v3h-1.5c-.5 0-1 .25-1 1V9.5h2.5l-.5 3z" fill="#FFFFFF"/>
+          </svg>
+          <span>Facebook</span>
+        </a>
+      </div>
+
       <button class="footer-row" type="button" data-theme-toggle aria-label="Theme umschalten">
         <svg class="nav-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         <svg class="nav-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
@@ -1540,22 +1596,22 @@
     <div class="cloud-stats">
       <div class="cloud-stat">
         <div class="stat-label">Stories</div>
-        <div class="stat-value">54</div>
+        <div class="stat-value">58</div>
         <div class="stat-sub">live captured</div>
       </div>
       <div class="cloud-stat">
         <div class="stat-label">Komponenten</div>
-        <div class="stat-value">8</div>
+        <div class="stat-value">9</div>
         <div class="stat-sub">registriert</div>
       </div>
       <div class="cloud-stat">
         <div class="stat-label">Render-Check</div>
-        <div class="stat-value">54/54</div>
+        <div class="stat-value">58/58</div>
         <div class="stat-sub">erfolgreich</div>
       </div>
       <div class="cloud-stat">
         <div class="stat-label">Letztes Update</div>
-        <div class="stat-value" style="font-size:14px;font-family:var(--cloud-font-body);font-weight:500">2026-05-16_18-56-20</div>
+        <div class="stat-value" style="font-size:14px;font-family:var(--cloud-font-body);font-weight:500">2026-05-16_20-10-47</div>
         <div class="stat-sub">automatisch</div>
       </div>
     </div>
@@ -1563,10 +1619,10 @@
     <div class="cloud-filter">
       <div class="cloud-filter-row">
         <span class="cloud-filter-label">Filter</span>
-        <div class="chip-row" data-row="level0" style="display:inline-flex"><button class="chip active" data-level0="all" data-level1="all">All <span class="chip-count">54</span></button><button class="chip" data-level0="Ui" data-level1="all">Ui <span class="chip-count">5</span></button><button class="chip" data-level0="Foundation" data-level1="all">Foundation <span class="chip-count">4</span></button><button class="chip" data-level0="Screens" data-level1="all">Screens <span class="chip-count">23</span></button><button class="chip" data-level0="Chassis" data-level1="all">Chassis <span class="chip-count">22</span></button></div>
+        <div class="chip-row" data-row="level0" style="display:inline-flex"><button class="chip active" data-level0="all" data-level1="all">All <span class="chip-count">58</span></button><button class="chip" data-level0="Ui" data-level1="all">Ui <span class="chip-count">5</span></button><button class="chip" data-level0="Foundation" data-level1="all">Foundation <span class="chip-count">8</span></button><button class="chip" data-level0="Screens" data-level1="all">Screens <span class="chip-count">23</span></button><button class="chip" data-level0="Chassis" data-level1="all">Chassis <span class="chip-count">22</span></button></div>
       </div>
       <div class="cloud-filter-row">
-        <div class="chip-row sub" data-row="level1"><button class="chip chip-sub" data-level0="Ui" data-level1="Ios notification" data-parent="Ui">Ios notification <span class="chip-count">5</span></button><button class="chip chip-sub" data-level0="Foundation" data-level1="Typography" data-parent="Foundation">Typography <span class="chip-count">4</span></button><button class="chip chip-sub" data-level0="Screens" data-level1="Email inbox" data-parent="Screens">Email inbox <span class="chip-count">6</span></button><button class="chip chip-sub" data-level0="Screens" data-level1="Instagram profile" data-parent="Screens">Instagram profile <span class="chip-count">5</span></button><button class="chip chip-sub" data-level0="Chassis" data-level1="Iphone" data-parent="Chassis">Iphone <span class="chip-count">13</span></button><button class="chip chip-sub" data-level0="Chassis" data-level1="Macbook pro" data-parent="Chassis">Macbook pro <span class="chip-count">9</span></button><button class="chip chip-sub" data-level0="Screens" data-level1="Reels feed" data-parent="Screens">Reels feed <span class="chip-count">6</span></button><button class="chip chip-sub" data-level0="Screens" data-level1="Whatsapp chat" data-parent="Screens">Whatsapp chat <span class="chip-count">6</span></button></div>
+        <div class="chip-row sub" data-row="level1"><button class="chip chip-sub" data-level0="Ui" data-level1="Ios notification" data-parent="Ui">Ios notification <span class="chip-count">5</span></button><button class="chip chip-sub" data-level0="Foundation" data-level1="Typography" data-parent="Foundation">Typography <span class="chip-count">4</span></button><button class="chip chip-sub" data-level0="Screens" data-level1="Email inbox" data-parent="Screens">Email inbox <span class="chip-count">6</span></button><button class="chip chip-sub" data-level0="Screens" data-level1="Instagram profile" data-parent="Screens">Instagram profile <span class="chip-count">5</span></button><button class="chip chip-sub" data-level0="Chassis" data-level1="Iphone" data-parent="Chassis">Iphone <span class="chip-count">13</span></button><button class="chip chip-sub" data-level0="Chassis" data-level1="Macbook pro" data-parent="Chassis">Macbook pro <span class="chip-count">9</span></button><button class="chip chip-sub" data-level0="Screens" data-level1="Reels feed" data-parent="Screens">Reels feed <span class="chip-count">6</span></button><button class="chip chip-sub" data-level0="Foundation" data-level1="Typewriter rotator" data-parent="Foundation">Typewriter rotator <span class="chip-count">4</span></button><button class="chip chip-sub" data-level0="Screens" data-level1="Whatsapp chat" data-parent="Screens">Whatsapp chat <span class="chip-count">6</span></button></div>
       </div>
     </div>
 
@@ -1630,7 +1686,7 @@
                   <code class="story-id">ui--ios-notification--whats-app-on-dark</code>
                 </div>
               </div>
-            </article></div></section><section class="group" data-group="Foundation"><h2>Foundation <span class="count">4</span></h2><div class="grid">
+            </article></div></section><section class="group" data-group="Foundation"><h2>Foundation <span class="count">8</span></h2><div class="grid">
             <article class="card" data-level0="Foundation" data-level1="Typography">
               <a href="./foundation--typography--sans-vs-mono.png" class="card-image-link" data-storyid="foundation--typography--sans-vs-mono" title="Sans vs mono — open preview">
                 <img class="shot" src="./foundation--typography--sans-vs-mono.png" alt="Sans vs mono" loading="lazy" />
@@ -1676,6 +1732,54 @@
                 <div class="sub">Typography</div>
                 <div class="actions">
                   <code class="story-id">foundation--typography--weights</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Foundation" data-level1="Typewriter rotator">
+              <a href="./foundation--typewriter-rotator--af-hero-headline.png" class="card-image-link" data-storyid="foundation--typewriter-rotator--af-hero-headline" title="Af hero headline — open preview">
+                <img class="shot" src="./foundation--typewriter-rotator--af-hero-headline.png" alt="Af hero headline" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Af hero headline</div>
+                <div class="sub">Typewriter rotator</div>
+                <div class="actions">
+                  <code class="story-id">foundation--typewriter-rotator--af-hero-headline</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Foundation" data-level1="Typewriter rotator">
+              <a href="./foundation--typewriter-rotator--fast-block-cursor.png" class="card-image-link" data-storyid="foundation--typewriter-rotator--fast-block-cursor" title="Fast block cursor — open preview">
+                <img class="shot" src="./foundation--typewriter-rotator--fast-block-cursor.png" alt="Fast block cursor" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Fast block cursor</div>
+                <div class="sub">Typewriter rotator</div>
+                <div class="actions">
+                  <code class="story-id">foundation--typewriter-rotator--fast-block-cursor</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Foundation" data-level1="Typewriter rotator">
+              <a href="./foundation--typewriter-rotator--run-once.png" class="card-image-link" data-storyid="foundation--typewriter-rotator--run-once" title="Run once — open preview">
+                <img class="shot" src="./foundation--typewriter-rotator--run-once.png" alt="Run once" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Run once</div>
+                <div class="sub">Typewriter rotator</div>
+                <div class="actions">
+                  <code class="story-id">foundation--typewriter-rotator--run-once</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Foundation" data-level1="Typewriter rotator">
+              <a href="./foundation--typewriter-rotator--slow-terminal.png" class="card-image-link" data-storyid="foundation--typewriter-rotator--slow-terminal" title="Slow terminal — open preview">
+                <img class="shot" src="./foundation--typewriter-rotator--slow-terminal.png" alt="Slow terminal" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Slow terminal</div>
+                <div class="sub">Typewriter rotator</div>
+                <div class="actions">
+                  <code class="story-id">foundation--typewriter-rotator--slow-terminal</code>
                 </div>
               </div>
             </article></div></section><section class="group" data-group="Screens"><h2>Screens <span class="count">23</span></h2><div class="grid">
@@ -2231,7 +2335,7 @@
           <span>Anfragenfluss · Werkschau · v0.1</span>
         </div>
         <div class="footer-meta" style="color:var(--cloud-text-muted)">
-          <span>Captured 2026-05-16_18-56-20</span>
+          <span>Captured 2026-05-16_20-10-47</span>
           <span>·</span>
           <span><code style="background:var(--cloud-surface-muted);color:var(--cloud-text-muted)">npm run contact-sheet</code></span>
         </div>
@@ -2272,7 +2376,7 @@
 <script>
 // Story data embedded for lightbox variant navigation. Built server-side so
 // JS doesn't need to fetch — fully self-contained, works offline.
-window.__AF_WERKSCHAU_STORIES__ = [{"storyId":"ui--ios-notification--gmail-on-dark","name":"Gmail on dark","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--gmail-on-dark.png","ok":true},{"storyId":"ui--ios-notification--interactive","name":"Interactive","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--interactive.png","ok":true},{"storyId":"ui--ios-notification--on-light-backdrop","name":"On light backdrop","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--on-light-backdrop.png","ok":true},{"storyId":"ui--ios-notification--stacked-group","name":"Stacked group","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--stacked-group.png","ok":true},{"storyId":"ui--ios-notification--whats-app-on-dark","name":"Whats app on dark","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--whats-app-on-dark.png","ok":true},{"storyId":"foundation--typography--sans-vs-mono","name":"Sans vs mono","levels":["Foundation","Typography"],"filename":"foundation--typography--sans-vs-mono.png","ok":true},{"storyId":"foundation--typography--tracking-demo","name":"Tracking demo","levels":["Foundation","Typography"],"filename":"foundation--typography--tracking-demo.png","ok":true},{"storyId":"foundation--typography--type-scale","name":"Type scale","levels":["Foundation","Typography"],"filename":"foundation--typography--type-scale.png","ok":true},{"storyId":"foundation--typography--weights","name":"Weights","levels":["Foundation","Typography"],"filename":"foundation--typography--weights.png","ok":true},{"storyId":"screens--email-inbox--full-inbox","name":"Full inbox","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--full-inbox.png","ok":true},{"storyId":"screens--email-inbox--highlighted-lead","name":"Highlighted lead","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--highlighted-lead.png","ok":true},{"storyId":"screens--email-inbox--standalone","name":"Standalone","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--standalone.png","ok":true},{"storyId":"screens--email-inbox--unread-only","name":"Unread only","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--unread-only.png","ok":true},{"storyId":"screens--email-inbox--with-filters","name":"With filters","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--with-filters.png","ok":true},{"storyId":"screens--email-inbox--with-search","name":"With search","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--with-search.png","ok":true},{"storyId":"screens--instagram-profile--anfragenfluss-profile","name":"Anfragenfluss profile","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--anfragenfluss-profile.png","ok":true},{"storyId":"screens--instagram-profile--reels-tab-active","name":"Reels tab active","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--reels-tab-active.png","ok":true},{"storyId":"screens--instagram-profile--small-account","name":"Small account","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--small-account.png","ok":true},{"storyId":"screens--instagram-profile--standalone","name":"Standalone","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--standalone.png","ok":true},{"storyId":"screens--instagram-profile--viewing-other-profile","name":"Viewing other profile","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--viewing-other-profile.png","ok":true},{"storyId":"chassis--iphone--compact","name":"Compact","levels":["Chassis","Iphone"],"filename":"chassis--iphone--compact.png","ok":true},{"storyId":"chassis--iphone--default","name":"Default","levels":["Chassis","Iphone"],"filename":"chassis--iphone--default.png","ok":true},{"storyId":"chassis--iphone--fluid","name":"Fluid","levels":["Chassis","Iphone"],"filename":"chassis--iphone--fluid.png","ok":true},{"storyId":"chassis--iphone--hero","name":"Hero","levels":["Chassis","Iphone"],"filename":"chassis--iphone--hero.png","ok":true},{"storyId":"chassis--iphone--immersive","name":"Immersive","levels":["Chassis","Iphone"],"filename":"chassis--iphone--immersive.png","ok":true},{"storyId":"chassis--iphone--ink-variant","name":"Ink variant","levels":["Chassis","Iphone"],"filename":"chassis--iphone--ink-variant.png","ok":true},{"storyId":"chassis--iphone--interactive","name":"Interactive","levels":["Chassis","Iphone"],"filename":"chassis--iphone--interactive.png","ok":true},{"storyId":"chassis--iphone--opaque-children","name":"Opaque children","levels":["Chassis","Iphone"],"filename":"chassis--iphone--opaque-children.png","ok":true},{"storyId":"chassis--iphone--paper-variant","name":"Paper variant","levels":["Chassis","Iphone"],"filename":"chassis--iphone--paper-variant.png","ok":true},{"storyId":"chassis--iphone--wallpaper-dots","name":"Wallpaper dots","levels":["Chassis","Iphone"],"filename":"chassis--iphone--wallpaper-dots.png","ok":true},{"storyId":"chassis--iphone--wallpaper-grid","name":"Wallpaper grid","levels":["Chassis","Iphone"],"filename":"chassis--iphone--wallpaper-grid.png","ok":true},{"storyId":"chassis--iphone--wallpaper-mesh","name":"Wallpaper mesh","levels":["Chassis","Iphone"],"filename":"chassis--iphone--wallpaper-mesh.png","ok":true},{"storyId":"chassis--iphone--wallpaper-minimal","name":"Wallpaper minimal","levels":["Chassis","Iphone"],"filename":"chassis--iphone--wallpaper-minimal.png","ok":true},{"storyId":"chassis--macbook-pro--compact","name":"Compact","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--compact.png","ok":true},{"storyId":"chassis--macbook-pro--default","name":"Default","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--default.png","ok":true},{"storyId":"chassis--macbook-pro--fluid","name":"Fluid","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--fluid.png","ok":true},{"storyId":"chassis--macbook-pro--hero","name":"Hero","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--hero.png","ok":true},{"storyId":"chassis--macbook-pro--immersive","name":"Immersive","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--immersive.png","ok":true},{"storyId":"chassis--macbook-pro--interactive","name":"Interactive","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--interactive.png","ok":true},{"storyId":"chassis--macbook-pro--silver","name":"Silver","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--silver.png","ok":true},{"storyId":"chassis--macbook-pro--space-gray","name":"Space gray","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--space-gray.png","ok":true},{"storyId":"chassis--macbook-pro--with-dashboard","name":"With dashboard","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--with-dashboard.png","ok":true},{"storyId":"screens--reels-feed--anfragenfluss-reel","name":"Anfragenfluss reel","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--anfragenfluss-reel.png","ok":true},{"storyId":"screens--reels-feed--high-engagement","name":"High engagement","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--high-engagement.png","ok":true},{"storyId":"screens--reels-feed--liked-and-saved","name":"Liked and saved","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--liked-and-saved.png","ok":true},{"storyId":"screens--reels-feed--minimal","name":"Minimal","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--minimal.png","ok":true},{"storyId":"screens--reels-feed--standalone","name":"Standalone","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--standalone.png","ok":true},{"storyId":"screens--reels-feed--with-image-media","name":"With image media","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--with-image-media.png","ok":true},{"storyId":"screens--whatsapp-chat--inside-chassis","name":"Inside chassis","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--inside-chassis.png","ok":true},{"storyId":"screens--whatsapp-chat--long-conversation","name":"Long conversation","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--long-conversation.png","ok":true},{"storyId":"screens--whatsapp-chat--receipt-states","name":"Receipt states","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--receipt-states.png","ok":true},{"storyId":"screens--whatsapp-chat--standalone","name":"Standalone","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--standalone.png","ok":true},{"storyId":"screens--whatsapp-chat--with-typing-indicator","name":"With typing indicator","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--with-typing-indicator.png","ok":true},{"storyId":"screens--whatsapp-chat--with-voice-message","name":"With voice message","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--with-voice-message.png","ok":true}];
+window.__AF_WERKSCHAU_STORIES__ = [{"storyId":"ui--ios-notification--gmail-on-dark","name":"Gmail on dark","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--gmail-on-dark.png","ok":true},{"storyId":"ui--ios-notification--interactive","name":"Interactive","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--interactive.png","ok":true},{"storyId":"ui--ios-notification--on-light-backdrop","name":"On light backdrop","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--on-light-backdrop.png","ok":true},{"storyId":"ui--ios-notification--stacked-group","name":"Stacked group","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--stacked-group.png","ok":true},{"storyId":"ui--ios-notification--whats-app-on-dark","name":"Whats app on dark","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--whats-app-on-dark.png","ok":true},{"storyId":"foundation--typography--sans-vs-mono","name":"Sans vs mono","levels":["Foundation","Typography"],"filename":"foundation--typography--sans-vs-mono.png","ok":true},{"storyId":"foundation--typography--tracking-demo","name":"Tracking demo","levels":["Foundation","Typography"],"filename":"foundation--typography--tracking-demo.png","ok":true},{"storyId":"foundation--typography--type-scale","name":"Type scale","levels":["Foundation","Typography"],"filename":"foundation--typography--type-scale.png","ok":true},{"storyId":"foundation--typography--weights","name":"Weights","levels":["Foundation","Typography"],"filename":"foundation--typography--weights.png","ok":true},{"storyId":"screens--email-inbox--full-inbox","name":"Full inbox","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--full-inbox.png","ok":true},{"storyId":"screens--email-inbox--highlighted-lead","name":"Highlighted lead","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--highlighted-lead.png","ok":true},{"storyId":"screens--email-inbox--standalone","name":"Standalone","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--standalone.png","ok":true},{"storyId":"screens--email-inbox--unread-only","name":"Unread only","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--unread-only.png","ok":true},{"storyId":"screens--email-inbox--with-filters","name":"With filters","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--with-filters.png","ok":true},{"storyId":"screens--email-inbox--with-search","name":"With search","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--with-search.png","ok":true},{"storyId":"screens--instagram-profile--anfragenfluss-profile","name":"Anfragenfluss profile","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--anfragenfluss-profile.png","ok":true},{"storyId":"screens--instagram-profile--reels-tab-active","name":"Reels tab active","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--reels-tab-active.png","ok":true},{"storyId":"screens--instagram-profile--small-account","name":"Small account","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--small-account.png","ok":true},{"storyId":"screens--instagram-profile--standalone","name":"Standalone","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--standalone.png","ok":true},{"storyId":"screens--instagram-profile--viewing-other-profile","name":"Viewing other profile","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--viewing-other-profile.png","ok":true},{"storyId":"chassis--iphone--compact","name":"Compact","levels":["Chassis","Iphone"],"filename":"chassis--iphone--compact.png","ok":true},{"storyId":"chassis--iphone--default","name":"Default","levels":["Chassis","Iphone"],"filename":"chassis--iphone--default.png","ok":true},{"storyId":"chassis--iphone--fluid","name":"Fluid","levels":["Chassis","Iphone"],"filename":"chassis--iphone--fluid.png","ok":true},{"storyId":"chassis--iphone--hero","name":"Hero","levels":["Chassis","Iphone"],"filename":"chassis--iphone--hero.png","ok":true},{"storyId":"chassis--iphone--immersive","name":"Immersive","levels":["Chassis","Iphone"],"filename":"chassis--iphone--immersive.png","ok":true},{"storyId":"chassis--iphone--ink-variant","name":"Ink variant","levels":["Chassis","Iphone"],"filename":"chassis--iphone--ink-variant.png","ok":true},{"storyId":"chassis--iphone--interactive","name":"Interactive","levels":["Chassis","Iphone"],"filename":"chassis--iphone--interactive.png","ok":true},{"storyId":"chassis--iphone--opaque-children","name":"Opaque children","levels":["Chassis","Iphone"],"filename":"chassis--iphone--opaque-children.png","ok":true},{"storyId":"chassis--iphone--paper-variant","name":"Paper variant","levels":["Chassis","Iphone"],"filename":"chassis--iphone--paper-variant.png","ok":true},{"storyId":"chassis--iphone--wallpaper-dots","name":"Wallpaper dots","levels":["Chassis","Iphone"],"filename":"chassis--iphone--wallpaper-dots.png","ok":true},{"storyId":"chassis--iphone--wallpaper-grid","name":"Wallpaper grid","levels":["Chassis","Iphone"],"filename":"chassis--iphone--wallpaper-grid.png","ok":true},{"storyId":"chassis--iphone--wallpaper-mesh","name":"Wallpaper mesh","levels":["Chassis","Iphone"],"filename":"chassis--iphone--wallpaper-mesh.png","ok":true},{"storyId":"chassis--iphone--wallpaper-minimal","name":"Wallpaper minimal","levels":["Chassis","Iphone"],"filename":"chassis--iphone--wallpaper-minimal.png","ok":true},{"storyId":"chassis--macbook-pro--compact","name":"Compact","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--compact.png","ok":true},{"storyId":"chassis--macbook-pro--default","name":"Default","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--default.png","ok":true},{"storyId":"chassis--macbook-pro--fluid","name":"Fluid","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--fluid.png","ok":true},{"storyId":"chassis--macbook-pro--hero","name":"Hero","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--hero.png","ok":true},{"storyId":"chassis--macbook-pro--immersive","name":"Immersive","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--immersive.png","ok":true},{"storyId":"chassis--macbook-pro--interactive","name":"Interactive","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--interactive.png","ok":true},{"storyId":"chassis--macbook-pro--silver","name":"Silver","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--silver.png","ok":true},{"storyId":"chassis--macbook-pro--space-gray","name":"Space gray","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--space-gray.png","ok":true},{"storyId":"chassis--macbook-pro--with-dashboard","name":"With dashboard","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--with-dashboard.png","ok":true},{"storyId":"screens--reels-feed--anfragenfluss-reel","name":"Anfragenfluss reel","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--anfragenfluss-reel.png","ok":true},{"storyId":"screens--reels-feed--high-engagement","name":"High engagement","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--high-engagement.png","ok":true},{"storyId":"screens--reels-feed--liked-and-saved","name":"Liked and saved","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--liked-and-saved.png","ok":true},{"storyId":"screens--reels-feed--minimal","name":"Minimal","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--minimal.png","ok":true},{"storyId":"screens--reels-feed--standalone","name":"Standalone","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--standalone.png","ok":true},{"storyId":"screens--reels-feed--with-image-media","name":"With image media","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--with-image-media.png","ok":true},{"storyId":"foundation--typewriter-rotator--af-hero-headline","name":"Af hero headline","levels":["Foundation","Typewriter rotator"],"filename":"foundation--typewriter-rotator--af-hero-headline.png","ok":true},{"storyId":"foundation--typewriter-rotator--fast-block-cursor","name":"Fast block cursor","levels":["Foundation","Typewriter rotator"],"filename":"foundation--typewriter-rotator--fast-block-cursor.png","ok":true},{"storyId":"foundation--typewriter-rotator--run-once","name":"Run once","levels":["Foundation","Typewriter rotator"],"filename":"foundation--typewriter-rotator--run-once.png","ok":true},{"storyId":"foundation--typewriter-rotator--slow-terminal","name":"Slow terminal","levels":["Foundation","Typewriter rotator"],"filename":"foundation--typewriter-rotator--slow-terminal.png","ok":true},{"storyId":"screens--whatsapp-chat--inside-chassis","name":"Inside chassis","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--inside-chassis.png","ok":true},{"storyId":"screens--whatsapp-chat--long-conversation","name":"Long conversation","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--long-conversation.png","ok":true},{"storyId":"screens--whatsapp-chat--receipt-states","name":"Receipt states","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--receipt-states.png","ok":true},{"storyId":"screens--whatsapp-chat--standalone","name":"Standalone","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--standalone.png","ok":true},{"storyId":"screens--whatsapp-chat--with-typing-indicator","name":"With typing indicator","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--with-typing-indicator.png","ok":true},{"storyId":"screens--whatsapp-chat--with-voice-message","name":"With voice message","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--with-voice-message.png","ok":true}];
 </script>
 
 <script>
