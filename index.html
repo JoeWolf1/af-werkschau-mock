@@ -1,0 +1,2310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>AF Werkschau — 2026-05-16_17-40-15</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* AF brand canon — tokens mirror /styles/af-tokens.css so this HTML stands
+     alone as a deliverable. Ink + Paper + Pulse, no rogue colors. */
+  :root {
+    --af-ink: #010E26;
+    --af-ink-muted: #14233E;
+    --af-pulse: #60A5FA;
+    --af-paper: #FFFFFF;
+    --af-canvas: #FBFAF7;          /* Off-white canvas — sits under cards */
+    --af-ink-glow-04: rgba(1, 14, 38, 0.04);
+    --af-ink-glow-08: rgba(1, 14, 38, 0.08);
+    --af-ink-glow-16: rgba(1, 14, 38, 0.16);
+    --af-pulse-glow-12: rgba(96, 165, 250, 0.12);
+    --af-pulse-glow-20: rgba(96, 165, 250, 0.20);
+    --af-pulse-glow-30: rgba(96, 165, 250, 0.30);
+    --af-border-subtle: rgba(1, 14, 38, 0.08);
+    --af-border-strong: rgba(1, 14, 38, 0.18);
+    --af-muted: rgba(1, 14, 38, 0.55);
+    --af-ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    background: var(--af-canvas);
+    color: var(--af-ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  code, .mono { font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+  /* ── App shell ────────────────────────────────────────────────────────────
+     Three layers of sticky chrome at the top:
+       1. .app-bar   — minimal brand strip (always visible, slim)
+       2. .hero      — intro copy + stat tiles (scrolls away, sets context)
+       3. .filter-bar — sticky filter chips (always visible once hero scrolls)
+     This matches the "proper app look" Joe asked for — clear brand presence,
+     orientation copy, persistent filtering — instead of one over-stuffed header.
+     ──────────────────────────────────────────────────────────────────────── */
+
+  /* Dark app bar — mirrors the anfragenfluss.cloud logged-in dashboard:
+     deep ink background, paper brand mark, pulse accent dot. Sets the
+     "this is an AF surface" tone the moment the page loads. */
+  .app-bar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    padding: 14px 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--af-ink);
+    color: rgba(255, 255, 255, 0.92);
+  }
+  .app-bar .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    color: var(--af-paper);
+  }
+  .app-bar .brand .wordmark {
+    color: var(--af-paper);
+  }
+  .app-bar .brand .pulse-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--af-pulse);
+    box-shadow: 0 0 10px var(--af-pulse-glow-30), 0 0 0 0 var(--af-pulse-glow-30);
+    animation: pulse-breathe 2.6s var(--af-ease-out-soft) infinite;
+  }
+  @keyframes pulse-breathe {
+    0%, 100% { box-shadow: 0 0 8px var(--af-pulse-glow-30); }
+    50%      { box-shadow: 0 0 14px var(--af-pulse-glow-30), 0 0 22px rgba(96, 165, 250, 0.14); }
+  }
+  .app-bar .brand .divider {
+    display: inline-block;
+    width: 1px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.18);
+  }
+  .app-bar .brand .product {
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 500;
+    letter-spacing: 0.005em;
+  }
+  .app-bar .app-bar-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.55);
+    font-variant-numeric: tabular-nums;
+  }
+  .app-bar .app-bar-meta code {
+    font-size: 10.5px;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .app-bar .app-bar-meta .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    background: rgba(96, 165, 250, 0.16);
+    border: 1px solid rgba(96, 165, 250, 0.32);
+    color: var(--af-pulse);
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .app-bar .app-bar-meta .badge::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--af-pulse);
+    box-shadow: 0 0 6px var(--af-pulse-glow-50, rgba(96, 165, 250, 0.5));
+  }
+
+  /* ── Hero — orientation + intro copy ────────────────────────────────────── */
+  .hero {
+    padding: 64px 56px 40px;
+    max-width: 980px;
+  }
+  .hero .eyebrow {
+    font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--af-pulse);
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    margin: 0 0 14px;
+    font-size: 44px;
+    font-weight: 600;
+    letter-spacing: -0.024em;
+    line-height: 1.08;
+    color: var(--af-ink);
+  }
+  .hero p.lede {
+    margin: 0 0 28px;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--af-ink-muted);
+    max-width: 720px;
+    letter-spacing: -0.003em;
+  }
+  /* Quick-actions row — prominent shortcuts to the most useful Ladle views.
+     Top of the list: the wallpaper picker, because that's a queued decision
+     Joe needs to make. Putting it in the hero means he doesn't have to hunt. */
+  .hero .quick-actions {
+    margin: 0 0 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .hero .qa {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: var(--af-paper);
+    color: var(--af-ink);
+    border: 1px solid var(--af-border-subtle);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.003em;
+    text-decoration: none;
+    transition: all 0.2s var(--af-ease-out-soft);
+  }
+  .hero .qa:hover {
+    border-color: var(--af-border-strong);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px var(--af-pulse-glow-12);
+  }
+  .hero .qa.qa-primary {
+    background: var(--af-ink);
+    color: var(--af-paper);
+    border-color: var(--af-ink);
+  }
+  .hero .qa.qa-primary:hover {
+    background: var(--af-ink-muted);
+    box-shadow: 0 6px 16px var(--af-pulse-glow-30);
+  }
+
+  .hero .stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .hero .stat {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 18px;
+    background: var(--af-paper);
+    border: 1px solid var(--af-border-subtle);
+    border-radius: 10px;
+    min-width: 132px;
+  }
+  .hero .stat .stat-value {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.014em;
+    color: var(--af-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .hero .stat .stat-label {
+    font-size: 11px;
+    color: var(--af-muted);
+    letter-spacing: 0.01em;
+  }
+
+  /* ── Filter bar — sticky chips, persists once hero scrolls off ───────── */
+  .filter-bar {
+    position: sticky;
+    top: 49px; /* app-bar height (14*2 + ~21 line-height) */
+    z-index: 15;
+    padding: 16px 56px 18px;
+    border-bottom: 1px solid var(--af-border-subtle);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    background: rgba(251, 250, 247, 0.85);
+  }
+  .filter-bar .filter-label {
+    display: inline-block;
+    margin-right: 12px;
+    font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--af-muted);
+    vertical-align: middle;
+  }
+  /* Chip-filter UI — top-level (level0) + sub-level (level1) chips.
+     The chip-rows sit inside .filter-bar (its own sticky region). */
+  .chip-row {
+    margin-top: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .chip-row.sub {
+    margin-top: 10px;
+    min-height: 28px;
+  }
+  .chip {
+    appearance: none;
+    border: 1px solid var(--af-border-subtle);
+    background: var(--af-paper);
+    color: var(--af-ink);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.005em;
+    cursor: pointer;
+    transition: all 0.18s var(--af-ease-out-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .chip:hover {
+    border-color: var(--af-border-strong);
+    box-shadow: 0 2px 8px var(--af-pulse-glow-12);
+  }
+  .chip.active {
+    background: var(--af-ink);
+    color: var(--af-paper);
+    border-color: var(--af-ink);
+    box-shadow: 0 4px 14px var(--af-ink-glow-16);
+  }
+  .chip.chip-sub {
+    font-size: 11px;
+    padding: 5px 11px;
+    background: var(--af-ink-glow-04);
+    border-color: transparent;
+    color: var(--af-ink-muted);
+  }
+  .chip.chip-sub:hover {
+    background: var(--af-ink-glow-08);
+    border-color: transparent;
+    box-shadow: none;
+  }
+  .chip.chip-sub.active {
+    background: var(--af-pulse);
+    color: var(--af-paper);
+    border-color: var(--af-pulse);
+    box-shadow: 0 4px 14px var(--af-pulse-glow-30);
+  }
+  .chip.chip-sub.hidden { display: none; }
+  .chip-count {
+    font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 10px;
+    font-weight: 400;
+    opacity: 0.55;
+    font-variant-numeric: tabular-nums;
+  }
+  .chip.active .chip-count { opacity: 0.75; }
+  /* Cards / groups hidden by filter — JS toggles the .filtered-out class. */
+  .card.filtered-out, .group.filtered-out { display: none; }
+  .group { padding: 40px 56px 8px; }
+  .group h2 {
+    margin: 0 0 20px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    color: var(--af-ink);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .group h2 .count {
+    font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    color: var(--af-muted);
+    font-weight: 400;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 24px;
+  }
+  .card {
+    background: var(--af-paper);
+    border: 1px solid var(--af-border-subtle);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.22s var(--af-ease-out-soft), box-shadow 0.22s var(--af-ease-out-soft), border-color 0.22s var(--af-ease-out-soft);
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px var(--af-ink-glow-08), 0 4px 12px var(--af-pulse-glow-12);
+    border-color: var(--af-border-strong);
+  }
+  .card a { display: block; }
+  .shot {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1280 / 900;
+    object-fit: cover;
+    background: var(--af-ink-glow-04);
+  }
+  .shot.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c33;
+    font-size: 12px;
+    padding: 14px;
+    aspect-ratio: 1280 / 900;
+  }
+  .meta { padding: 14px 16px 16px; }
+  .title {
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: -0.005em;
+    color: var(--af-ink);
+  }
+  .sub {
+    color: var(--af-muted);
+    font-size: 11px;
+    margin-top: 3px;
+    letter-spacing: 0.01em;
+  }
+  .actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 11px;
+    flex-wrap: wrap;
+  }
+  /* Primary action — the prominent "Open in Ladle" button.
+     This is where Joe actually wants to go (sidebar + controls panel),
+     so it's styled as a button-shaped target, not a text link. */
+  .actions a.action-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--af-ink);
+    color: var(--af-paper);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.005em;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.18s var(--af-ease-out-soft);
+  }
+  .actions a.action-primary:hover {
+    background: var(--af-ink-muted);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--af-pulse-glow-20);
+  }
+  /* Secondary — the quieter "preview only" text link for chrome-stripped view. */
+  .actions a.action-secondary {
+    color: var(--af-muted);
+    text-decoration: none;
+    font-weight: 400;
+    font-size: 11px;
+    letter-spacing: 0.005em;
+    padding: 4px 0;
+  }
+  .actions a.action-secondary:hover {
+    color: var(--af-ink-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .actions .story-id {
+    color: var(--af-muted);
+    margin-left: auto;
+    font-size: 10px;
+    background: var(--af-ink-glow-04);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+  /* Card-image link — make the whole image clickable with a clear cursor cue. */
+  .card-image-link {
+    display: block;
+    position: relative;
+    cursor: pointer;
+  }
+  .card-image-link::after {
+    content: 'Open in Ladle →';
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(1, 14, 38, 0.78);
+    color: var(--af-paper);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    padding: 4px 9px;
+    border-radius: 999px;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.2s var(--af-ease-out-soft), transform 0.2s var(--af-ease-out-soft);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: none;
+  }
+  .card:hover .card-image-link::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .card.failed { opacity: 0.5; }
+  /* Empty state — when filter yields nothing visible. */
+  .empty-state {
+    padding: 80px 56px;
+    text-align: center;
+    color: var(--af-muted);
+    font-size: 13px;
+    display: none;
+  }
+  .empty-state.visible { display: block; }
+
+  /* ───────────────────────────────────────────────────────────────────────
+   * ANFRAGENFLUSS.CLOUD STYLE — overrides above tokens to make the Werkschau
+   * look like a page IN the cloud (sidebar + main shell). Fonts swap to
+   * Montserrat + Inter (cloud canon), color tokens align with cloud's
+   * surface system. THIS IS A MOCK — never deployed to anfragenfluss.cloud
+   * production, only as a separate mock URL Joe can show Jonathan.
+   * ─────────────────────────────────────────────────────────────────── */
+  :root {
+    /* Cloud color tokens (light-mode, matches src/app/globals.css) */
+    --cloud-surface: #FFFFFF;
+    --cloud-surface-sunken: #F9FAFB;
+    --cloud-surface-muted: #F2F4F7;
+    --cloud-border: #EAECF0;
+    --cloud-border-subtle: #F2F4F7;
+    --cloud-text-primary: #101828;
+    --cloud-text-secondary: #344054;
+    --cloud-text-muted: #667085;
+    --cloud-text-faint: rgba(15, 23, 42, 0.22);
+    /* Cloud sidebar specifics (light mode from Sidebar.tsx) */
+    --cloud-sidebar-bg: rgba(243, 245, 250, 0.92);
+    --cloud-sidebar-border: rgba(0, 0, 0, 0.06);
+    --cloud-sidebar-border-subtle: rgba(0, 0, 0, 0.04);
+    --cloud-sidebar-text: rgba(15, 23, 42, 0.85);
+    --cloud-sidebar-text-secondary: rgba(15, 23, 42, 0.50);
+    --cloud-sidebar-text-muted: rgba(15, 23, 42, 0.30);
+    --cloud-sidebar-hover-bg: rgba(0, 0, 0, 0.04);
+    --cloud-sidebar-active-bg: rgba(37, 99, 235, 0.08);
+    --cloud-sidebar-active-border: rgba(37, 99, 235, 0.12);
+    --cloud-sidebar-active-text: #1e40af;
+    --cloud-sidebar-active-glow: 0 0 20px rgba(37, 99, 235, 0.08);
+    --cloud-pulse: #3B82F6;
+    --cloud-beta-bg: rgba(180, 120, 0, 0.08);
+    --cloud-beta-color: rgba(161, 98, 7, 0.7);
+    --cloud-beta-border: rgba(180, 120, 0, 0.12);
+    /* Cloud fonts (override AF tokens) */
+    --cloud-font-heading: 'Montserrat', system-ui, sans-serif;
+    --cloud-font-body: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  }
+  body {
+    font-family: var(--cloud-font-body);
+    background: var(--cloud-surface-sunken);
+    color: var(--cloud-text-primary);
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2, h3 { font-family: var(--cloud-font-heading); }
+
+  /* App shell — sidebar (224px) + main (rest) */
+  .app-shell {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── Cloud sidebar ─────────────────────────────────────────────────── */
+  .cloud-sidebar {
+    width: 224px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    flex-shrink: 0;
+    background: var(--cloud-sidebar-bg);
+    backdrop-filter: blur(48px) saturate(1.6);
+    -webkit-backdrop-filter: blur(48px) saturate(1.6);
+    border-right: 1px solid var(--cloud-sidebar-border);
+    display: flex;
+    flex-direction: column;
+    font-family: var(--cloud-font-body);
+  }
+  .sidebar-brand {
+    padding: 18px 16px 16px;
+    border-bottom: 1px solid var(--cloud-sidebar-border-subtle);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sidebar-brand .logo-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #010E26, #1B5F7A);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-family: var(--cloud-font-heading);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+  }
+  .sidebar-brand .logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+  .sidebar-brand .logo-wordmark {
+    font-family: var(--cloud-font-heading);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--cloud-text-primary);
+  }
+  .sidebar-brand .logo-subtitle {
+    font-size: 9.5px;
+    color: var(--cloud-text-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-top: 1px;
+  }
+  .sidebar-search {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--cloud-sidebar-border-subtle);
+  }
+  .sidebar-search button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 12px;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 10px;
+    color: var(--cloud-sidebar-text-secondary);
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: -0.003em;
+    cursor: pointer;
+    transition: all 0.15s var(--af-ease-out-soft);
+  }
+  .sidebar-search button:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.06);
+  }
+  .sidebar-search kbd {
+    margin-left: auto;
+    font-family: inherit;
+    font-size: 9px;
+    padding: 2px 5px;
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 5px;
+    color: rgba(15, 23, 42, 0.25);
+  }
+  .sidebar-nav {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .sidebar-nav::-webkit-scrollbar { display: none; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    color: var(--cloud-sidebar-text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 420;
+    letter-spacing: -0.006em;
+    border: 1px solid transparent;
+    transition: all 0.18s var(--af-ease-out-soft);
+    cursor: pointer;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+  }
+  .nav-item:hover {
+    background: var(--cloud-sidebar-hover-bg);
+    color: rgba(15, 23, 42, 0.75);
+    border-color: var(--cloud-sidebar-border-subtle);
+  }
+  .nav-item.active {
+    background: var(--cloud-sidebar-active-bg);
+    color: var(--cloud-sidebar-active-text);
+    border-color: var(--cloud-sidebar-active-border);
+    box-shadow: var(--cloud-sidebar-active-glow);
+    font-weight: 550;
+  }
+  .nav-item .nav-icon {
+    width: 15px;
+    height: 15px;
+    stroke-width: 1.8;
+    flex-shrink: 0;
+    opacity: 0.5;
+  }
+  .nav-item.active .nav-icon { opacity: 0.95; }
+  .nav-item .nav-label { flex: 1; }
+  .nav-item .nav-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--cloud-pulse);
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+    flex-shrink: 0;
+  }
+  .nav-item .beta-badge {
+    font-size: 7px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 1px 4px;
+    background: var(--cloud-beta-bg);
+    color: var(--cloud-beta-color);
+    border: 1px solid var(--cloud-beta-border);
+    border-radius: 4px;
+    line-height: 1.2;
+  }
+  .nav-group { margin-bottom: 2px; }
+  .nav-group .chevron {
+    width: 12px;
+    height: 12px;
+    stroke-width: 2;
+    opacity: 0.5;
+    transition: transform 0.2s;
+  }
+  .nav-group.open .chevron { transform: rotate(0deg); }
+  .nav-group:not(.open) .chevron { transform: rotate(-90deg); }
+  .nav-children {
+    margin-left: 20px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    padding-left: 12px;
+    border-left: 2px solid var(--cloud-sidebar-active-border);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .nav-group:not(.open) .nav-children { display: none; }
+  .nav-child {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    color: var(--cloud-sidebar-text-secondary);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 420;
+    transition: all 0.15s var(--af-ease-out-soft);
+  }
+  .nav-child:hover {
+    background: var(--cloud-sidebar-hover-bg);
+    color: rgba(15, 23, 42, 0.75);
+  }
+  .nav-child.active {
+    background: var(--cloud-sidebar-active-bg);
+    color: var(--cloud-sidebar-active-text);
+    font-weight: 550;
+  }
+  .nav-child .child-icon-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+  .sidebar-footer {
+    padding: 12px;
+    border-top: 1px solid var(--cloud-sidebar-border-subtle);
+  }
+  .sidebar-footer .footer-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--cloud-sidebar-text-muted);
+    letter-spacing: -0.003em;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .sidebar-footer .footer-row:hover {
+    background: var(--cloud-sidebar-hover-bg);
+    color: rgba(15, 23, 42, 0.75);
+  }
+  .sidebar-footer .user-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 12px;
+    margin-bottom: 2px;
+  }
+  .sidebar-footer .user-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(96, 165, 250, 0.08));
+    border: 1px solid rgba(37, 99, 235, 0.12);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    color: rgba(37, 99, 235, 0.8);
+    flex-shrink: 0;
+  }
+  .sidebar-footer .user-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .sidebar-footer .user-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--cloud-text-primary);
+    line-height: 1.1;
+  }
+  .sidebar-footer .user-role {
+    font-size: 10px;
+    color: var(--cloud-text-muted);
+    line-height: 1.1;
+    margin-top: 2px;
+  }
+
+  /* ── Main content area ─────────────────────────────────────────────── */
+  .cloud-main {
+    flex: 1;
+    min-width: 0;
+    background: var(--cloud-surface-sunken);
+    padding: 32px 40px 64px;
+  }
+  .main-header {
+    margin-bottom: 28px;
+  }
+  .main-header .breadcrumb {
+    font-size: 12px;
+    color: var(--cloud-text-muted);
+    letter-spacing: -0.003em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .main-header .breadcrumb-sep { opacity: 0.5; }
+  .main-header h1 {
+    font-family: var(--cloud-font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.022em;
+    color: var(--cloud-text-primary);
+    margin: 0 0 8px;
+    line-height: 1.1;
+  }
+  .main-header .lede {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--cloud-text-secondary);
+    max-width: 720px;
+    margin: 0;
+  }
+
+  /* Stat tiles (cloud style — minimal borders, sharp typography) */
+  .cloud-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 24px 0 32px;
+  }
+  .cloud-stat {
+    background: var(--cloud-surface);
+    border: 1px solid var(--cloud-border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .cloud-stat .stat-label {
+    font-size: 12px;
+    color: var(--cloud-text-muted);
+    letter-spacing: 0.005em;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .cloud-stat .stat-value {
+    font-family: var(--cloud-font-heading);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--cloud-text-primary);
+    letter-spacing: -0.018em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.05;
+  }
+  .cloud-stat .stat-sub {
+    font-size: 11px;
+    color: var(--cloud-text-muted);
+    margin-top: 4px;
+  }
+
+  /* Filter row (cloud chip style — sharper, smaller) */
+  .cloud-filter {
+    background: var(--cloud-surface);
+    border: 1px solid var(--cloud-border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .cloud-filter-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .cloud-filter-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--cloud-text-muted);
+    margin-right: 6px;
+  }
+
+  /* Override the chip styling for cloud look */
+  .cloud-main .chip {
+    background: var(--cloud-surface-muted);
+    border: 1px solid transparent;
+    color: var(--cloud-text-primary);
+    padding: 5px 12px;
+    font-size: 12px;
+  }
+  .cloud-main .chip:hover {
+    background: rgba(0, 0, 0, 0.06);
+    box-shadow: none;
+  }
+  .cloud-main .chip.active {
+    background: var(--cloud-sidebar-active-bg);
+    color: var(--cloud-sidebar-active-text);
+    border-color: var(--cloud-sidebar-active-border);
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.08);
+  }
+  .cloud-main .chip.chip-sub {
+    background: rgba(0, 0, 0, 0.025);
+    color: var(--cloud-text-secondary);
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+  .cloud-main .chip.chip-sub.active {
+    background: var(--cloud-sidebar-active-bg);
+    color: var(--cloud-sidebar-active-text);
+    border-color: var(--cloud-sidebar-active-border);
+  }
+
+  /* Card grid sections — keep simple cloud aesthetic */
+  .cloud-main .group {
+    padding: 0;
+    margin-bottom: 36px;
+  }
+  .cloud-main .group h2 {
+    font-family: var(--cloud-font-heading);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.012em;
+    color: var(--cloud-text-primary);
+    margin: 0 0 14px;
+  }
+  .cloud-main .group h2 .count {
+    font-family: var(--cloud-font-body);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--cloud-text-muted);
+    margin-left: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+  .cloud-main .card {
+    background: var(--cloud-surface);
+    border: 1px solid var(--cloud-border);
+    border-radius: 12px;
+  }
+  .cloud-main .card:hover {
+    border-color: rgba(37, 99, 235, 0.15);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  }
+  .cloud-main .card .title {
+    font-family: var(--cloud-font-heading);
+    font-weight: 600;
+    color: var(--cloud-text-primary);
+  }
+  .cloud-main .card .sub { color: var(--cloud-text-muted); }
+  .cloud-main .actions a.action-primary {
+    background: var(--cloud-pulse);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .cloud-main .actions a.action-primary:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+  }
+  .cloud-main .actions .story-id {
+    background: var(--cloud-surface-muted);
+    color: var(--cloud-text-muted);
+  }
+
+  /* Mock banner — small ribbon top of main saying this isn't live */
+  .mock-banner {
+    background: linear-gradient(90deg, rgba(180, 120, 0, 0.08), rgba(180, 120, 0, 0.04));
+    border: 1px solid rgba(180, 120, 0, 0.18);
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+    color: rgba(120, 80, 0, 0.85);
+    letter-spacing: -0.003em;
+  }
+  .mock-banner .mock-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(180, 120, 0, 0.7);
+    box-shadow: 0 0 8px rgba(180, 120, 0, 0.3);
+    flex-shrink: 0;
+  }
+
+  /* ── Page footer — small persistent brand mark + run instructions ────── */
+  .page-footer {
+    margin-top: 64px;
+    padding: 28px 56px 32px;
+    border-top: 1px solid var(--af-border-subtle);
+    background: var(--af-paper);
+  }
+  .page-footer .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .page-footer .footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    color: var(--af-ink);
+  }
+  .page-footer .footer-brand .pulse-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--af-pulse);
+    box-shadow: 0 0 8px var(--af-pulse-glow-30);
+  }
+  .page-footer .footer-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--af-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .page-footer .footer-meta code {
+    font-size: 10.5px;
+    background: var(--af-ink-glow-04);
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: var(--af-ink-muted);
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <!-- ── Cloud-style sidebar (mock — looks like anfragenfluss.cloud's left nav) ── -->
+  <aside class="cloud-sidebar">
+    <div class="sidebar-brand">
+      <span class="logo-mark" aria-hidden="true">AF</span>
+      <div class="logo-text">
+        <span class="logo-wordmark">anfragenfluss.cloud</span>
+        <span class="logo-subtitle">Das Fulfillment Portal</span>
+      </div>
+    </div>
+
+    <div class="sidebar-search">
+      <button type="button">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>Suche</span>
+        <kbd>⌘K</kbd>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Hauptnavigation">
+      <a class="nav-item" href="#" tabindex="-1">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        <span class="nav-label">Dashboard</span>
+      </a>
+      <a class="nav-item" href="#" tabindex="-1">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+        <span class="nav-label">Aufträge</span>
+      </a>
+      <a class="nav-item" href="#" tabindex="-1">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 14.5A6.5 6.5 0 1 1 18 11h-3.4L18 7.5 15.5 5"/><path d="M12 17v5"/></svg>
+        <span class="nav-label">Onboarding</span>
+      </a>
+      <a class="nav-item" href="#" tabindex="-1">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V7l8-4 8 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/></svg>
+        <span class="nav-label">Kunden</span>
+      </a>
+      <a class="nav-item" href="#" tabindex="-1">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4z"/></svg>
+        <span class="nav-label">Videografie</span>
+        <span class="beta-badge">BETA</span>
+      </a>
+      <a class="nav-item" href="#" tabindex="-1">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <span class="nav-label">Zeiterfassung</span>
+      </a>
+      <a class="nav-item" href="#" tabindex="-1">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
+        <span class="nav-label">Buchhaltung</span>
+      </a>
+
+      <!-- Studio group — expanded, Werkschau active -->
+      <div class="nav-group open">
+        <button class="nav-item" type="button" tabindex="-1">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8 19 13M15 9h0M17.8 6.2 19 5M3 21l9-9M12.2 6.2 11 5"/></svg>
+          <span class="nav-label">Studio</span>
+          <span class="beta-badge">BETA</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="nav-children">
+          <a class="nav-child" href="#" tabindex="-1">
+            <span class="child-icon-dot" style="background:#7C3AED"></span>
+            <span>Job Center</span>
+          </a>
+          <a class="nav-child active" href="#" tabindex="-1">
+            <span class="child-icon-dot" style="background:var(--cloud-pulse);box-shadow:0 0 6px rgba(59,130,246,0.5);opacity:1"></span>
+            <span>Werkschau</span>
+          </a>
+          <a class="nav-child" href="#" tabindex="-1">
+            <span class="child-icon-dot" style="background:#06B6D4"></span>
+            <span>Creative Generator</span>
+          </a>
+          <a class="nav-child" href="#" tabindex="-1">
+            <span class="child-icon-dot" style="background:#F97316"></span>
+            <span>Meta Launcher</span>
+          </a>
+          <a class="nav-child" href="#" tabindex="-1">
+            <span class="child-icon-dot" style="background:#22C55E"></span>
+            <span>Social Poster</span>
+          </a>
+          <a class="nav-child" href="#" tabindex="-1">
+            <span class="child-icon-dot" style="background:#EAB308"></span>
+            <span>Video Generator</span>
+          </a>
+          <a class="nav-child" href="#" tabindex="-1">
+            <span class="child-icon-dot" style="background:#EC4899"></span>
+            <span>Landingpage Generator</span>
+          </a>
+          <a class="nav-child" href="#" tabindex="-1">
+            <span class="child-icon-dot" style="background:#8B5CF6"></span>
+            <span>Reports</span>
+          </a>
+        </div>
+      </div>
+
+      <a class="nav-item" href="#" tabindex="-1">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17v-7m6 7v-4m6 4V8m6 9V5"/></svg>
+        <span class="nav-label">Business Development</span>
+        <span class="beta-badge">BETA</span>
+      </a>
+      <a class="nav-item" href="#" tabindex="-1">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m18 17-3-3-4 4-4-4"/></svg>
+        <span class="nav-label">Analytics</span>
+      </a>
+      <a class="nav-item" href="#" tabindex="-1">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="7" r="3"/><path d="M21 21v-1.5a3.5 3.5 0 0 0-3.5-3.5"/></svg>
+        <span class="nav-label">Nutzerverwaltung</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="footer-row" type="button" tabindex="-1">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span>Dark Mode</span>
+      </button>
+      <div class="user-row">
+        <span class="user-avatar">JW</span>
+        <div class="user-info">
+          <div class="user-name">Joe Wolf</div>
+          <div class="user-role">Admin</div>
+        </div>
+      </div>
+      <button class="footer-row" type="button" tabindex="-1">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Abmelden</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Main content — Werkschau dashboard inside the cloud shell ── -->
+  <main class="cloud-main">
+    <div class="mock-banner">
+      <span class="mock-dot" aria-hidden="true"></span>
+      <span><strong>Mock-up:</strong> This is a visual mock of Werkschau inside anfragenfluss.cloud — not deployed to the live cloud. For show-and-tell only.</span>
+    </div>
+
+    <div class="main-header">
+      <div class="breadcrumb">
+        <span>Studio</span>
+        <span class="breadcrumb-sep">›</span>
+        <span style="color:var(--cloud-text-secondary)">Werkschau</span>
+      </div>
+      <h1>Werkschau</h1>
+      <p class="lede">Eine lebende Ausstellung jeder brand-canon AF-Komponente, automatisch aus dem Ladle-Dev-Environment gerendert. Per Klick öffnest du jede Komponente isoliert mit Live-Props — perfekt für Design-Reviews mit Damian, Demos für Jonathan oder einfach zum Stöbern.</p>
+    </div>
+
+    <div class="cloud-stats">
+      <div class="cloud-stat">
+        <div class="stat-label">Stories</div>
+        <div class="stat-value">54</div>
+        <div class="stat-sub">live captured</div>
+      </div>
+      <div class="cloud-stat">
+        <div class="stat-label">Komponenten</div>
+        <div class="stat-value">8</div>
+        <div class="stat-sub">registriert</div>
+      </div>
+      <div class="cloud-stat">
+        <div class="stat-label">Render-Check</div>
+        <div class="stat-value">54/54</div>
+        <div class="stat-sub">erfolgreich</div>
+      </div>
+      <div class="cloud-stat">
+        <div class="stat-label">Letztes Update</div>
+        <div class="stat-value" style="font-size:14px;font-family:var(--cloud-font-body);font-weight:500">2026-05-16_17-40-15</div>
+        <div class="stat-sub">automatisch</div>
+      </div>
+    </div>
+
+    <div class="cloud-filter">
+      <div class="cloud-filter-row">
+        <span class="cloud-filter-label">Filter</span>
+        <div class="chip-row" data-row="level0" style="display:inline-flex"><button class="chip active" data-level0="all" data-level1="all">All <span class="chip-count">54</span></button><button class="chip" data-level0="Ui" data-level1="all">Ui <span class="chip-count">5</span></button><button class="chip" data-level0="Foundation" data-level1="all">Foundation <span class="chip-count">4</span></button><button class="chip" data-level0="Screens" data-level1="all">Screens <span class="chip-count">23</span></button><button class="chip" data-level0="Chassis" data-level1="all">Chassis <span class="chip-count">22</span></button></div>
+      </div>
+      <div class="cloud-filter-row">
+        <div class="chip-row sub" data-row="level1"><button class="chip chip-sub" data-level0="Ui" data-level1="Ios notification" data-parent="Ui">Ios notification <span class="chip-count">5</span></button><button class="chip chip-sub" data-level0="Foundation" data-level1="Typography" data-parent="Foundation">Typography <span class="chip-count">4</span></button><button class="chip chip-sub" data-level0="Screens" data-level1="Email inbox" data-parent="Screens">Email inbox <span class="chip-count">6</span></button><button class="chip chip-sub" data-level0="Screens" data-level1="Instagram profile" data-parent="Screens">Instagram profile <span class="chip-count">5</span></button><button class="chip chip-sub" data-level0="Chassis" data-level1="Iphone" data-parent="Chassis">Iphone <span class="chip-count">13</span></button><button class="chip chip-sub" data-level0="Chassis" data-level1="Macbook pro" data-parent="Chassis">Macbook pro <span class="chip-count">9</span></button><button class="chip chip-sub" data-level0="Screens" data-level1="Reels feed" data-parent="Screens">Reels feed <span class="chip-count">6</span></button><button class="chip chip-sub" data-level0="Screens" data-level1="Whatsapp chat" data-parent="Screens">Whatsapp chat <span class="chip-count">6</span></button></div>
+      </div>
+    </div>
+
+    <section class="group" data-group="Ui"><h2>Ui <span class="count">5</span></h2><div class="grid">
+            <article class="card" data-level0="Ui" data-level1="Ios notification">
+              <a href="http://localhost:61000/?story=ui--ios-notification--gmail-on-dark" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./ui--ios-notification--gmail-on-dark.png" alt="Gmail on dark" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Gmail on dark</div>
+                <div class="sub">Ios notification</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=ui--ios-notification--gmail-on-dark" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=ui--ios-notification--gmail-on-dark&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">ui--ios-notification--gmail-on-dark</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Ui" data-level1="Ios notification">
+              <a href="http://localhost:61000/?story=ui--ios-notification--interactive" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./ui--ios-notification--interactive.png" alt="Interactive" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Interactive</div>
+                <div class="sub">Ios notification</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=ui--ios-notification--interactive" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=ui--ios-notification--interactive&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">ui--ios-notification--interactive</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Ui" data-level1="Ios notification">
+              <a href="http://localhost:61000/?story=ui--ios-notification--on-light-backdrop" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./ui--ios-notification--on-light-backdrop.png" alt="On light backdrop" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">On light backdrop</div>
+                <div class="sub">Ios notification</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=ui--ios-notification--on-light-backdrop" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=ui--ios-notification--on-light-backdrop&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">ui--ios-notification--on-light-backdrop</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Ui" data-level1="Ios notification">
+              <a href="http://localhost:61000/?story=ui--ios-notification--stacked-group" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./ui--ios-notification--stacked-group.png" alt="Stacked group" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Stacked group</div>
+                <div class="sub">Ios notification</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=ui--ios-notification--stacked-group" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=ui--ios-notification--stacked-group&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">ui--ios-notification--stacked-group</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Ui" data-level1="Ios notification">
+              <a href="http://localhost:61000/?story=ui--ios-notification--whats-app-on-dark" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./ui--ios-notification--whats-app-on-dark.png" alt="Whats app on dark" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Whats app on dark</div>
+                <div class="sub">Ios notification</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=ui--ios-notification--whats-app-on-dark" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=ui--ios-notification--whats-app-on-dark&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">ui--ios-notification--whats-app-on-dark</code>
+                </div>
+              </div>
+            </article></div></section><section class="group" data-group="Foundation"><h2>Foundation <span class="count">4</span></h2><div class="grid">
+            <article class="card" data-level0="Foundation" data-level1="Typography">
+              <a href="http://localhost:61000/?story=foundation--typography--sans-vs-mono" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./foundation--typography--sans-vs-mono.png" alt="Sans vs mono" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Sans vs mono</div>
+                <div class="sub">Typography</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=foundation--typography--sans-vs-mono" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=foundation--typography--sans-vs-mono&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">foundation--typography--sans-vs-mono</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Foundation" data-level1="Typography">
+              <a href="http://localhost:61000/?story=foundation--typography--tracking-demo" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./foundation--typography--tracking-demo.png" alt="Tracking demo" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Tracking demo</div>
+                <div class="sub">Typography</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=foundation--typography--tracking-demo" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=foundation--typography--tracking-demo&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">foundation--typography--tracking-demo</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Foundation" data-level1="Typography">
+              <a href="http://localhost:61000/?story=foundation--typography--type-scale" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./foundation--typography--type-scale.png" alt="Type scale" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Type scale</div>
+                <div class="sub">Typography</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=foundation--typography--type-scale" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=foundation--typography--type-scale&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">foundation--typography--type-scale</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Foundation" data-level1="Typography">
+              <a href="http://localhost:61000/?story=foundation--typography--weights" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./foundation--typography--weights.png" alt="Weights" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Weights</div>
+                <div class="sub">Typography</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=foundation--typography--weights" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=foundation--typography--weights&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">foundation--typography--weights</code>
+                </div>
+              </div>
+            </article></div></section><section class="group" data-group="Screens"><h2>Screens <span class="count">23</span></h2><div class="grid">
+            <article class="card" data-level0="Screens" data-level1="Email inbox">
+              <a href="http://localhost:61000/?story=screens--email-inbox--full-inbox" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--email-inbox--full-inbox.png" alt="Full inbox" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Full inbox</div>
+                <div class="sub">Email inbox</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--email-inbox--full-inbox" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--email-inbox--full-inbox&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--email-inbox--full-inbox</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Email inbox">
+              <a href="http://localhost:61000/?story=screens--email-inbox--highlighted-lead" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--email-inbox--highlighted-lead.png" alt="Highlighted lead" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Highlighted lead</div>
+                <div class="sub">Email inbox</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--email-inbox--highlighted-lead" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--email-inbox--highlighted-lead&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--email-inbox--highlighted-lead</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Email inbox">
+              <a href="http://localhost:61000/?story=screens--email-inbox--standalone" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--email-inbox--standalone.png" alt="Standalone" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Standalone</div>
+                <div class="sub">Email inbox</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--email-inbox--standalone" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--email-inbox--standalone&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--email-inbox--standalone</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Email inbox">
+              <a href="http://localhost:61000/?story=screens--email-inbox--unread-only" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--email-inbox--unread-only.png" alt="Unread only" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Unread only</div>
+                <div class="sub">Email inbox</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--email-inbox--unread-only" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--email-inbox--unread-only&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--email-inbox--unread-only</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Email inbox">
+              <a href="http://localhost:61000/?story=screens--email-inbox--with-filters" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--email-inbox--with-filters.png" alt="With filters" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">With filters</div>
+                <div class="sub">Email inbox</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--email-inbox--with-filters" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--email-inbox--with-filters&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--email-inbox--with-filters</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Email inbox">
+              <a href="http://localhost:61000/?story=screens--email-inbox--with-search" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--email-inbox--with-search.png" alt="With search" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">With search</div>
+                <div class="sub">Email inbox</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--email-inbox--with-search" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--email-inbox--with-search&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--email-inbox--with-search</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Instagram profile">
+              <a href="http://localhost:61000/?story=screens--instagram-profile--anfragenfluss-profile" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--instagram-profile--anfragenfluss-profile.png" alt="Anfragenfluss profile" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Anfragenfluss profile</div>
+                <div class="sub">Instagram profile</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--instagram-profile--anfragenfluss-profile" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--instagram-profile--anfragenfluss-profile&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--instagram-profile--anfragenfluss-profile</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Instagram profile">
+              <a href="http://localhost:61000/?story=screens--instagram-profile--reels-tab-active" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--instagram-profile--reels-tab-active.png" alt="Reels tab active" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Reels tab active</div>
+                <div class="sub">Instagram profile</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--instagram-profile--reels-tab-active" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--instagram-profile--reels-tab-active&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--instagram-profile--reels-tab-active</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Instagram profile">
+              <a href="http://localhost:61000/?story=screens--instagram-profile--small-account" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--instagram-profile--small-account.png" alt="Small account" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Small account</div>
+                <div class="sub">Instagram profile</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--instagram-profile--small-account" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--instagram-profile--small-account&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--instagram-profile--small-account</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Instagram profile">
+              <a href="http://localhost:61000/?story=screens--instagram-profile--standalone" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--instagram-profile--standalone.png" alt="Standalone" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Standalone</div>
+                <div class="sub">Instagram profile</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--instagram-profile--standalone" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--instagram-profile--standalone&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--instagram-profile--standalone</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Instagram profile">
+              <a href="http://localhost:61000/?story=screens--instagram-profile--viewing-other-profile" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--instagram-profile--viewing-other-profile.png" alt="Viewing other profile" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Viewing other profile</div>
+                <div class="sub">Instagram profile</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--instagram-profile--viewing-other-profile" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--instagram-profile--viewing-other-profile&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--instagram-profile--viewing-other-profile</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Reels feed">
+              <a href="http://localhost:61000/?story=screens--reels-feed--anfragenfluss-reel" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--reels-feed--anfragenfluss-reel.png" alt="Anfragenfluss reel" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Anfragenfluss reel</div>
+                <div class="sub">Reels feed</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--reels-feed--anfragenfluss-reel" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--reels-feed--anfragenfluss-reel&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--reels-feed--anfragenfluss-reel</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Reels feed">
+              <a href="http://localhost:61000/?story=screens--reels-feed--high-engagement" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--reels-feed--high-engagement.png" alt="High engagement" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">High engagement</div>
+                <div class="sub">Reels feed</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--reels-feed--high-engagement" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--reels-feed--high-engagement&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--reels-feed--high-engagement</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Reels feed">
+              <a href="http://localhost:61000/?story=screens--reels-feed--liked-and-saved" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--reels-feed--liked-and-saved.png" alt="Liked and saved" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Liked and saved</div>
+                <div class="sub">Reels feed</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--reels-feed--liked-and-saved" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--reels-feed--liked-and-saved&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--reels-feed--liked-and-saved</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Reels feed">
+              <a href="http://localhost:61000/?story=screens--reels-feed--minimal" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--reels-feed--minimal.png" alt="Minimal" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Minimal</div>
+                <div class="sub">Reels feed</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--reels-feed--minimal" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--reels-feed--minimal&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--reels-feed--minimal</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Reels feed">
+              <a href="http://localhost:61000/?story=screens--reels-feed--standalone" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--reels-feed--standalone.png" alt="Standalone" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Standalone</div>
+                <div class="sub">Reels feed</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--reels-feed--standalone" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--reels-feed--standalone&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--reels-feed--standalone</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Reels feed">
+              <a href="http://localhost:61000/?story=screens--reels-feed--with-image-media" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--reels-feed--with-image-media.png" alt="With image media" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">With image media</div>
+                <div class="sub">Reels feed</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--reels-feed--with-image-media" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--reels-feed--with-image-media&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--reels-feed--with-image-media</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Whatsapp chat">
+              <a href="http://localhost:61000/?story=screens--whatsapp-chat--inside-chassis" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--whatsapp-chat--inside-chassis.png" alt="Inside chassis" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Inside chassis</div>
+                <div class="sub">Whatsapp chat</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--whatsapp-chat--inside-chassis" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--whatsapp-chat--inside-chassis&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--whatsapp-chat--inside-chassis</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Whatsapp chat">
+              <a href="http://localhost:61000/?story=screens--whatsapp-chat--long-conversation" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--whatsapp-chat--long-conversation.png" alt="Long conversation" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Long conversation</div>
+                <div class="sub">Whatsapp chat</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--whatsapp-chat--long-conversation" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--whatsapp-chat--long-conversation&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--whatsapp-chat--long-conversation</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Whatsapp chat">
+              <a href="http://localhost:61000/?story=screens--whatsapp-chat--receipt-states" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--whatsapp-chat--receipt-states.png" alt="Receipt states" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Receipt states</div>
+                <div class="sub">Whatsapp chat</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--whatsapp-chat--receipt-states" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--whatsapp-chat--receipt-states&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--whatsapp-chat--receipt-states</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Whatsapp chat">
+              <a href="http://localhost:61000/?story=screens--whatsapp-chat--standalone" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--whatsapp-chat--standalone.png" alt="Standalone" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Standalone</div>
+                <div class="sub">Whatsapp chat</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--whatsapp-chat--standalone" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--whatsapp-chat--standalone&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--whatsapp-chat--standalone</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Whatsapp chat">
+              <a href="http://localhost:61000/?story=screens--whatsapp-chat--with-typing-indicator" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--whatsapp-chat--with-typing-indicator.png" alt="With typing indicator" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">With typing indicator</div>
+                <div class="sub">Whatsapp chat</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--whatsapp-chat--with-typing-indicator" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--whatsapp-chat--with-typing-indicator&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--whatsapp-chat--with-typing-indicator</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Screens" data-level1="Whatsapp chat">
+              <a href="http://localhost:61000/?story=screens--whatsapp-chat--with-voice-message" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./screens--whatsapp-chat--with-voice-message.png" alt="With voice message" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">With voice message</div>
+                <div class="sub">Whatsapp chat</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=screens--whatsapp-chat--with-voice-message" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=screens--whatsapp-chat--with-voice-message&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">screens--whatsapp-chat--with-voice-message</code>
+                </div>
+              </div>
+            </article></div></section><section class="group" data-group="Chassis"><h2>Chassis <span class="count">22</span></h2><div class="grid">
+            <article class="card" data-level0="Chassis" data-level1="Iphone">
+              <a href="http://localhost:61000/?story=chassis--iphone--compact" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--iphone--compact.png" alt="Compact" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Compact</div>
+                <div class="sub">Iphone</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--iphone--compact" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--iphone--compact&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--iphone--compact</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Iphone">
+              <a href="http://localhost:61000/?story=chassis--iphone--default" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--iphone--default.png" alt="Default" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Default</div>
+                <div class="sub">Iphone</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--iphone--default" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--iphone--default&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--iphone--default</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Iphone">
+              <a href="http://localhost:61000/?story=chassis--iphone--fluid" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--iphone--fluid.png" alt="Fluid" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Fluid</div>
+                <div class="sub">Iphone</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--iphone--fluid" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--iphone--fluid&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--iphone--fluid</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Iphone">
+              <a href="http://localhost:61000/?story=chassis--iphone--hero" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--iphone--hero.png" alt="Hero" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Hero</div>
+                <div class="sub">Iphone</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--iphone--hero" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--iphone--hero&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--iphone--hero</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Iphone">
+              <a href="http://localhost:61000/?story=chassis--iphone--immersive" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--iphone--immersive.png" alt="Immersive" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Immersive</div>
+                <div class="sub">Iphone</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--iphone--immersive" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--iphone--immersive&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--iphone--immersive</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Iphone">
+              <a href="http://localhost:61000/?story=chassis--iphone--ink-variant" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--iphone--ink-variant.png" alt="Ink variant" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Ink variant</div>
+                <div class="sub">Iphone</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--iphone--ink-variant" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--iphone--ink-variant&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--iphone--ink-variant</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Iphone">
+              <a href="http://localhost:61000/?story=chassis--iphone--interactive" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--iphone--interactive.png" alt="Interactive" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Interactive</div>
+                <div class="sub">Iphone</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--iphone--interactive" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--iphone--interactive&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--iphone--interactive</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Iphone">
+              <a href="http://localhost:61000/?story=chassis--iphone--opaque-children" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--iphone--opaque-children.png" alt="Opaque children" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Opaque children</div>
+                <div class="sub">Iphone</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--iphone--opaque-children" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--iphone--opaque-children&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--iphone--opaque-children</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Iphone">
+              <a href="http://localhost:61000/?story=chassis--iphone--paper-variant" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--iphone--paper-variant.png" alt="Paper variant" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Paper variant</div>
+                <div class="sub">Iphone</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--iphone--paper-variant" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--iphone--paper-variant&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--iphone--paper-variant</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Iphone">
+              <a href="http://localhost:61000/?story=chassis--iphone--wallpaper-dots" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--iphone--wallpaper-dots.png" alt="Wallpaper dots" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Wallpaper dots</div>
+                <div class="sub">Iphone</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--iphone--wallpaper-dots" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--iphone--wallpaper-dots&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--iphone--wallpaper-dots</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Iphone">
+              <a href="http://localhost:61000/?story=chassis--iphone--wallpaper-grid" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--iphone--wallpaper-grid.png" alt="Wallpaper grid" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Wallpaper grid</div>
+                <div class="sub">Iphone</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--iphone--wallpaper-grid" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--iphone--wallpaper-grid&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--iphone--wallpaper-grid</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Iphone">
+              <a href="http://localhost:61000/?story=chassis--iphone--wallpaper-mesh" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--iphone--wallpaper-mesh.png" alt="Wallpaper mesh" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Wallpaper mesh</div>
+                <div class="sub">Iphone</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--iphone--wallpaper-mesh" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--iphone--wallpaper-mesh&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--iphone--wallpaper-mesh</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Iphone">
+              <a href="http://localhost:61000/?story=chassis--iphone--wallpaper-minimal" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--iphone--wallpaper-minimal.png" alt="Wallpaper minimal" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Wallpaper minimal</div>
+                <div class="sub">Iphone</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--iphone--wallpaper-minimal" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--iphone--wallpaper-minimal&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--iphone--wallpaper-minimal</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Macbook pro">
+              <a href="http://localhost:61000/?story=chassis--macbook-pro--compact" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--macbook-pro--compact.png" alt="Compact" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Compact</div>
+                <div class="sub">Macbook pro</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--compact" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--compact&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--macbook-pro--compact</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Macbook pro">
+              <a href="http://localhost:61000/?story=chassis--macbook-pro--default" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--macbook-pro--default.png" alt="Default" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Default</div>
+                <div class="sub">Macbook pro</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--default" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--default&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--macbook-pro--default</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Macbook pro">
+              <a href="http://localhost:61000/?story=chassis--macbook-pro--fluid" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--macbook-pro--fluid.png" alt="Fluid" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Fluid</div>
+                <div class="sub">Macbook pro</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--fluid" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--fluid&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--macbook-pro--fluid</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Macbook pro">
+              <a href="http://localhost:61000/?story=chassis--macbook-pro--hero" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--macbook-pro--hero.png" alt="Hero" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Hero</div>
+                <div class="sub">Macbook pro</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--hero" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--hero&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--macbook-pro--hero</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Macbook pro">
+              <a href="http://localhost:61000/?story=chassis--macbook-pro--immersive" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--macbook-pro--immersive.png" alt="Immersive" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Immersive</div>
+                <div class="sub">Macbook pro</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--immersive" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--immersive&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--macbook-pro--immersive</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Macbook pro">
+              <a href="http://localhost:61000/?story=chassis--macbook-pro--interactive" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--macbook-pro--interactive.png" alt="Interactive" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Interactive</div>
+                <div class="sub">Macbook pro</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--interactive" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--interactive&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--macbook-pro--interactive</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Macbook pro">
+              <a href="http://localhost:61000/?story=chassis--macbook-pro--silver" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--macbook-pro--silver.png" alt="Silver" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Silver</div>
+                <div class="sub">Macbook pro</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--silver" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--silver&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--macbook-pro--silver</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Macbook pro">
+              <a href="http://localhost:61000/?story=chassis--macbook-pro--space-gray" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--macbook-pro--space-gray.png" alt="Space gray" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">Space gray</div>
+                <div class="sub">Macbook pro</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--space-gray" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--space-gray&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--macbook-pro--space-gray</code>
+                </div>
+              </div>
+            </article>
+            <article class="card" data-level0="Chassis" data-level1="Macbook pro">
+              <a href="http://localhost:61000/?story=chassis--macbook-pro--with-dashboard" class="card-image-link" title="Open in Ladle (with sidebar + controls)">
+                <img class="shot" src="./chassis--macbook-pro--with-dashboard.png" alt="With dashboard" loading="lazy" />
+              </a>
+              <div class="meta">
+                <div class="title">With dashboard</div>
+                <div class="sub">Macbook pro</div>
+                <div class="actions">
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--with-dashboard" class="action-primary">
+                    Open in Ladle <span aria-hidden="true">→</span>
+                  </a>
+                  <a href="http://localhost:61000/?story=chassis--macbook-pro--with-dashboard&mode=preview" class="action-secondary" title="Chrome-stripped view — for screenshots">
+                    preview only
+                  </a>
+                  <code class="story-id">chassis--macbook-pro--with-dashboard</code>
+                </div>
+              </div>
+            </article></div></section>
+
+    <div class="empty-state" id="empty-state">
+      Keine Komponenten passen zum aktiven Filter — versuch eine andere Kategorie oben.
+    </div>
+
+    <footer class="page-footer" style="margin-top:64px;padding:24px 0 0;border-top:1px solid var(--cloud-border);background:transparent">
+      <div class="footer-inner">
+        <div class="footer-brand" style="color:var(--cloud-text-secondary)">
+          <span class="pulse-dot" style="background:var(--cloud-pulse)" aria-hidden="true"></span>
+          <span>Anfragenfluss · Werkschau · v0.1</span>
+        </div>
+        <div class="footer-meta" style="color:var(--cloud-text-muted)">
+          <span>Captured 2026-05-16_17-40-15</span>
+          <span>·</span>
+          <span><code style="background:var(--cloud-surface-muted);color:var(--cloud-text-muted)">npm run contact-sheet</code></span>
+        </div>
+      </div>
+    </footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  // Filter state — top-level taxonomy (level0) and optional sub-level (level1).
+  // 'all' means "no filter at this level."
+  let activeLevel0 = 'all';
+  let activeLevel1 = 'all';
+
+  const cards = document.querySelectorAll('.card');
+  const groups = document.querySelectorAll('.group');
+  const subChips = document.querySelectorAll('.chip.chip-sub');
+  const allChips = document.querySelectorAll('.chip');
+
+  function applyFilter() {
+    // 1. Card visibility — match both level0 and level1 filters.
+    cards.forEach((card) => {
+      const l0 = card.dataset.level0;
+      const l1 = card.dataset.level1;
+      const matches0 = activeLevel0 === 'all' || l0 === activeLevel0;
+      const matches1 = activeLevel1 === 'all' || l1 === activeLevel1;
+      card.classList.toggle('filtered-out', !(matches0 && matches1));
+    });
+
+    // 2. Group section visibility — hide whole section when no visible cards.
+    let anyVisible = false;
+    groups.forEach((group) => {
+      const visibleCards = group.querySelectorAll('.card:not(.filtered-out)');
+      const hide = visibleCards.length === 0;
+      group.classList.toggle('filtered-out', hide);
+      if (!hide) anyVisible = true;
+    });
+    // Empty-state — surface when no groups have any visible cards.
+    const emptyState = document.getElementById('empty-state');
+    if (emptyState) emptyState.classList.toggle('visible', !anyVisible);
+
+    // 3. Sub-chip visibility — only show sub-chips whose parent matches the
+    //    active level0 (or all sub-chips when level0 is 'all').
+    subChips.forEach((chip) => {
+      const parent = chip.dataset.parent;
+      const show = activeLevel0 === 'all' || parent === activeLevel0;
+      chip.classList.toggle('hidden', !show);
+    });
+
+    // 4. Chip active-state.
+    allChips.forEach((chip) => {
+      const isLevel0 = !chip.classList.contains('chip-sub');
+      const matches = isLevel0
+        ? chip.dataset.level0 === activeLevel0
+        : chip.dataset.level0 === activeLevel0 && chip.dataset.level1 === activeLevel1;
+      chip.classList.toggle('active', matches);
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    const isSub = chip.classList.contains('chip-sub');
+    if (isSub) {
+      // Sub-chip clicked — set both level0 (parent) and level1.
+      activeLevel0 = chip.dataset.level0;
+      activeLevel1 = chip.dataset.level1;
+    } else {
+      // Top-level chip clicked — set level0, reset level1.
+      activeLevel0 = chip.dataset.level0;
+      activeLevel1 = 'all';
+    }
+    applyFilter();
+    // Scroll back to top so user sees results immediately.
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  });
+
+  // Initial render — show all sub-chips since activeLevel0 starts at 'all'.
+  applyFilter();
+})();
+</script>
+</body>
+</html>
