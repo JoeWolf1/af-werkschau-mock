@@ -2,10 +2,25 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>AF Werkschau — 2026-05-16_18-48-11</title>
+<title>AF Werkschau — 2026-05-16_18-56-20</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  // Theme bootstrap — runs BEFORE the body renders to prevent flash-of-wrong-theme.
+  // Reads localStorage first, falls back to system preference, defaults to light.
+  (function () {
+    try {
+      var saved = localStorage.getItem('af-werkschau-theme');
+      var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+      // theme-ready flag enables smooth transitions AFTER initial paint (avoids flash on load)
+      requestAnimationFrame(function () { document.documentElement.setAttribute('data-theme-ready', '1'); });
+    } catch (e) {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  })();
+</script>
 <style>
   /* AF brand canon — tokens mirror /styles/af-tokens.css so this HTML stands
      alone as a deliverable. Ink + Paper + Pulse, no rogue colors. */
@@ -757,6 +772,81 @@
     --cloud-font-heading: 'Montserrat', system-ui, sans-serif;
     --cloud-font-body: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   }
+
+  /* ── Dark mode override — mirrors light tokens, swaps to ink-toned palette.
+     Activated by setting data-theme="dark" on <html>. JS toggle in sidebar
+     footer persists choice to localStorage. Same approach the real
+     anfragenfluss.cloud uses, just light-mode-default (cloud is dark-default). */
+  [data-theme="dark"] {
+    --cloud-surface:           #14233E;
+    --cloud-surface-sunken:    #010E26;
+    --cloud-surface-muted:     rgba(255, 255, 255, 0.04);
+    --cloud-border:            rgba(255, 255, 255, 0.08);
+    --cloud-border-subtle:     rgba(255, 255, 255, 0.04);
+    --cloud-text-primary:      rgba(255, 255, 255, 0.92);
+    --cloud-text-secondary:    rgba(255, 255, 255, 0.70);
+    --cloud-text-muted:        rgba(255, 255, 255, 0.50);
+    --cloud-text-faint:        rgba(255, 255, 255, 0.22);
+    --cloud-sidebar-bg:        rgba(8, 14, 28, 0.85);
+    --cloud-sidebar-border:    rgba(255, 255, 255, 0.06);
+    --cloud-sidebar-border-subtle: rgba(255, 255, 255, 0.04);
+    --cloud-sidebar-text:      rgba(255, 255, 255, 0.90);
+    --cloud-sidebar-text-secondary: rgba(255, 255, 255, 0.55);
+    --cloud-sidebar-text-muted: rgba(255, 255, 255, 0.32);
+    --cloud-sidebar-hover-bg:  rgba(255, 255, 255, 0.05);
+    --cloud-sidebar-active-bg: rgba(37, 99, 235, 0.14);
+    --cloud-sidebar-active-border: rgba(37, 99, 235, 0.22);
+    --cloud-sidebar-active-text: #93c5fd;
+    --cloud-sidebar-active-glow: 0 0 24px rgba(37, 99, 235, 0.15);
+    --cloud-pulse:             #60A5FA;
+    --cloud-beta-bg:           rgba(251, 191, 36, 0.10);
+    --cloud-beta-color:        rgba(251, 191, 36, 0.7);
+    --cloud-beta-border:       rgba(251, 191, 36, 0.18);
+  }
+  /* Dark-mode tweaks for specific elements that need extra polish */
+  [data-theme="dark"] .sidebar-brand .logo-mark {
+    background: linear-gradient(135deg, #1B5F7A, #60A5FA);
+  }
+  [data-theme="dark"] .sidebar-search button { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.06); }
+  [data-theme="dark"] .sidebar-search kbd { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.45); }
+  [data-theme="dark"] .sidebar-footer .user-avatar {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.25), rgba(96, 165, 250, 0.15));
+    border-color: rgba(96, 165, 250, 0.25);
+    color: rgba(255, 255, 255, 0.92);
+  }
+  [data-theme="dark"] .cloud-main .card:hover {
+    border-color: rgba(96, 165, 250, 0.30);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+  [data-theme="dark"] .mock-banner {
+    background: rgba(251, 191, 36, 0.06);
+    border-color: rgba(251, 191, 36, 0.20);
+    color: rgba(251, 191, 36, 0.85);
+  }
+  [data-theme="dark"] .mock-banner .mock-dot { background: rgba(251, 191, 36, 0.6); }
+  [data-theme="dark"] .lightbox-frame { background: var(--cloud-surface); }
+  [data-theme="dark"] .lightbox-image-wrap { background: var(--cloud-surface-sunken); }
+
+  /* Theme-toggle icon + label swap — moon shown in light mode (= "go dark"),
+     sun shown in dark mode (= "go light"). Label flips the same way. */
+  .theme-icon-sun, .theme-label-light-mode { display: none; }
+  [data-theme="dark"] .theme-icon-moon, [data-theme="dark"] .theme-label-dark-mode { display: none; }
+  [data-theme="dark"] .theme-icon-sun, [data-theme="dark"] .theme-label-light-mode { display: inline; }
+
+  /* Smooth color transitions on theme switch (but not on first paint) */
+  html[data-theme-ready] body,
+  html[data-theme-ready] .cloud-sidebar,
+  html[data-theme-ready] .cloud-main,
+  html[data-theme-ready] .card,
+  html[data-theme-ready] .cloud-stat,
+  html[data-theme-ready] .cloud-filter,
+  html[data-theme-ready] .chip,
+  html[data-theme-ready] .nav-item,
+  html[data-theme-ready] .nav-child {
+    transition: background-color 0.25s var(--af-ease-out-soft),
+                color 0.25s var(--af-ease-out-soft),
+                border-color 0.25s var(--af-ease-out-soft);
+  }
   body {
     font-family: var(--cloud-font-body);
     background: var(--cloud-surface-sunken);
@@ -1410,9 +1500,11 @@
     </nav>
 
     <div class="sidebar-footer">
-      <button class="footer-row" type="button" tabindex="-1">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        <span>Dark Mode</span>
+      <button class="footer-row" type="button" data-theme-toggle aria-label="Theme umschalten">
+        <svg class="nav-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="nav-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <span class="theme-label-dark-mode">Dark Mode</span>
+        <span class="theme-label-light-mode" style="display:none">Light Mode</span>
       </button>
       <div class="user-row">
         <span class="user-avatar">JW</span>
@@ -1463,7 +1555,7 @@
       </div>
       <div class="cloud-stat">
         <div class="stat-label">Letztes Update</div>
-        <div class="stat-value" style="font-size:14px;font-family:var(--cloud-font-body);font-weight:500">2026-05-16_18-48-11</div>
+        <div class="stat-value" style="font-size:14px;font-family:var(--cloud-font-body);font-weight:500">2026-05-16_18-56-20</div>
         <div class="stat-sub">automatisch</div>
       </div>
     </div>
@@ -2139,7 +2231,7 @@
           <span>Anfragenfluss · Werkschau · v0.1</span>
         </div>
         <div class="footer-meta" style="color:var(--cloud-text-muted)">
-          <span>Captured 2026-05-16_18-48-11</span>
+          <span>Captured 2026-05-16_18-56-20</span>
           <span>·</span>
           <span><code style="background:var(--cloud-surface-muted);color:var(--cloud-text-muted)">npm run contact-sheet</code></span>
         </div>
@@ -2241,6 +2333,16 @@ window.__AF_WERKSCHAU_STORIES__ = [{"storyId":"ui--ios-notification--gmail-on-da
 
   // Card-image click → intercept, open modal instead of navigating to PNG
   document.addEventListener('click', (e) => {
+    // Theme toggle (sidebar footer button)
+    const themeBtn = e.target.closest('[data-theme-toggle]');
+    if (themeBtn) {
+      e.preventDefault();
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('af-werkschau-theme', next); } catch (_) {}
+      return;
+    }
     const link = e.target.closest('.card-image-link');
     if (link) {
       e.preventDefault();
