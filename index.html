@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>AF Werkschau — 2026-05-16_18-33-25</title>
+<title>AF Werkschau — 2026-05-16_18-48-11</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -449,8 +449,244 @@
     position: relative;
     cursor: pointer;
   }
+
+  /* Aspect-ratio reservation so cards don't shift while images load */
+  .cloud-main .shot {
+    aspect-ratio: 1280 / 900;
+    background: var(--cloud-surface-muted);
+  }
+
+  /* ── In-page lightbox modal with variant sidebar ───────────────────────
+   * Opens on card click. Big image on the left, Ladle-style variant browser
+   * on the right showing ALL sibling stories of the same component. Click
+   * any variant → swap image instantly, no page navigation. Two ways to get
+   * back to the Werkschau grid: the prominent "← Werkschau" pill top-left
+   * AND the ✕ close top-right (plus ESC keyboard).
+   * ──────────────────────────────────────────────────────────────────── */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(1, 14, 38, 0.86);
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    opacity: 0;
+    transition: opacity 0.2s var(--af-ease-out-soft);
+    font-family: var(--cloud-font-body);
+  }
+  .lightbox.open {
+    display: flex;
+    opacity: 1;
+  }
+  .lightbox-frame {
+    position: relative;
+    width: min(1400px, 95vw);
+    height: min(900px, 92vh);
+    background: var(--cloud-surface);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(1, 14, 38, 0.5);
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+      "image variants"
+      "meta  variants";
+  }
+  .lightbox-image-wrap {
+    grid-area: image;
+    background: var(--cloud-surface-sunken);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 20px;
+  }
+  .lightbox-img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(1, 14, 38, 0.08);
+  }
+  .lightbox-meta {
+    grid-area: meta;
+    padding: 16px 24px;
+    border-top: 1px solid var(--cloud-border);
+    background: var(--cloud-surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .lightbox-meta .lb-title {
+    font-family: var(--cloud-font-heading);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--cloud-text-primary);
+    letter-spacing: -0.008em;
+  }
+  .lightbox-meta .lb-sub {
+    font-size: 11.5px;
+    color: var(--cloud-text-muted);
+    margin-top: 2px;
+    letter-spacing: 0.005em;
+  }
+  .lightbox-meta .lb-id {
+    font-family: var(--cloud-font-body);
+    font-size: 10.5px;
+    color: var(--cloud-text-muted);
+    background: var(--cloud-surface-muted);
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  /* Right rail — Ladle-style variant list */
+  .lightbox-variants {
+    grid-area: variants;
+    background: var(--cloud-surface);
+    border-left: 1px solid var(--cloud-border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .lightbox-variants-header {
+    padding: 16px 18px 10px;
+    border-bottom: 1px solid var(--cloud-border-subtle);
+  }
+  .lightbox-variants-header .lb-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--cloud-text-muted);
+    margin-bottom: 4px;
+  }
+  .lightbox-variants-header .lb-component-name {
+    font-family: var(--cloud-font-heading);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cloud-text-primary);
+    letter-spacing: -0.005em;
+  }
+  .lb-variant-list {
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .lb-variant {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.12s var(--af-ease-out-soft);
+    margin-bottom: 2px;
+  }
+  .lb-variant:hover { background: var(--cloud-surface-muted); }
+  .lb-variant.active {
+    background: var(--cloud-sidebar-active-bg);
+    box-shadow: 0 0 0 1px var(--cloud-sidebar-active-border) inset;
+  }
+  .lb-variant img {
+    width: 48px;
+    height: 34px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+    background: var(--cloud-surface-muted);
+  }
+  .lb-variant-name {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--cloud-text-primary);
+    letter-spacing: -0.003em;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .lb-variant.active .lb-variant-name { color: var(--cloud-sidebar-active-text); }
+  /* Back-to-Werkschau pill — prominent top-left */
+  .lightbox-back {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--cloud-text-primary);
+    font-family: var(--cloud-font-body);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: -0.003em;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(8px);
+    transition: transform 0.15s var(--af-ease-out-soft), box-shadow 0.15s var(--af-ease-out-soft);
+  }
+  .lightbox-back:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
+  }
+  /* Compact ✕ close top-right (secondary affordance) */
+  .lightbox-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 2;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    border: none;
+    color: var(--cloud-text-primary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    transition: transform 0.15s var(--af-ease-out-soft);
+  }
+  .lightbox-close:hover { transform: scale(1.05); }
+
+  /* Mobile / narrow viewport — stack variants under image */
+  @media (max-width: 900px) {
+    .lightbox-frame {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr auto auto;
+      grid-template-areas:
+        "image"
+        "meta"
+        "variants";
+    }
+    .lightbox-variants {
+      border-left: none;
+      border-top: 1px solid var(--cloud-border);
+      max-height: 180px;
+    }
+    .lb-variant-list { display: flex; gap: 8px; overflow-x: auto; padding: 12px; }
+    .lb-variant { flex-direction: column; min-width: 90px; }
+    .lb-variant img { width: 100%; height: 56px; }
+  }
   .card-image-link::after {
-    content: 'Open in Ladle →';
+    content: 'Öffnen';
     position: absolute;
     bottom: 10px;
     right: 10px;
@@ -666,7 +902,11 @@
     box-shadow: var(--cloud-sidebar-active-glow);
     font-weight: 550;
   }
-  .nav-item .nav-icon {
+  /* All Lucide-style SVG icons inside the sidebar — global rule so search,
+     nav, dark-mode toggle, and sign-out icons all render at the right size.
+     Previous version only scoped to .nav-item which left search/footer icons
+     at default huge SVG dimensions. Joe-flagged 2026-05-17. */
+  .cloud-sidebar svg.nav-icon {
     width: 15px;
     height: 15px;
     stroke-width: 1.8;
@@ -1223,7 +1463,7 @@
       </div>
       <div class="cloud-stat">
         <div class="stat-label">Letztes Update</div>
-        <div class="stat-value" style="font-size:14px;font-family:var(--cloud-font-body);font-weight:500">2026-05-16_18-33-25</div>
+        <div class="stat-value" style="font-size:14px;font-family:var(--cloud-font-body);font-weight:500">2026-05-16_18-48-11</div>
         <div class="stat-sub">automatisch</div>
       </div>
     </div>
@@ -1240,7 +1480,7 @@
 
     <section class="group" data-group="Ui"><h2>Ui <span class="count">5</span></h2><div class="grid">
             <article class="card" data-level0="Ui" data-level1="Ios notification">
-              <a href="./ui--ios-notification--gmail-on-dark.png" class="card-image-link" title="Gmail on dark — full-size preview">
+              <a href="./ui--ios-notification--gmail-on-dark.png" class="card-image-link" data-storyid="ui--ios-notification--gmail-on-dark" title="Gmail on dark — open preview">
                 <img class="shot" src="./ui--ios-notification--gmail-on-dark.png" alt="Gmail on dark" loading="lazy" />
               </a>
               <div class="meta">
@@ -1252,7 +1492,7 @@
               </div>
             </article>
             <article class="card" data-level0="Ui" data-level1="Ios notification">
-              <a href="./ui--ios-notification--interactive.png" class="card-image-link" title="Interactive — full-size preview">
+              <a href="./ui--ios-notification--interactive.png" class="card-image-link" data-storyid="ui--ios-notification--interactive" title="Interactive — open preview">
                 <img class="shot" src="./ui--ios-notification--interactive.png" alt="Interactive" loading="lazy" />
               </a>
               <div class="meta">
@@ -1264,7 +1504,7 @@
               </div>
             </article>
             <article class="card" data-level0="Ui" data-level1="Ios notification">
-              <a href="./ui--ios-notification--on-light-backdrop.png" class="card-image-link" title="On light backdrop — full-size preview">
+              <a href="./ui--ios-notification--on-light-backdrop.png" class="card-image-link" data-storyid="ui--ios-notification--on-light-backdrop" title="On light backdrop — open preview">
                 <img class="shot" src="./ui--ios-notification--on-light-backdrop.png" alt="On light backdrop" loading="lazy" />
               </a>
               <div class="meta">
@@ -1276,7 +1516,7 @@
               </div>
             </article>
             <article class="card" data-level0="Ui" data-level1="Ios notification">
-              <a href="./ui--ios-notification--stacked-group.png" class="card-image-link" title="Stacked group — full-size preview">
+              <a href="./ui--ios-notification--stacked-group.png" class="card-image-link" data-storyid="ui--ios-notification--stacked-group" title="Stacked group — open preview">
                 <img class="shot" src="./ui--ios-notification--stacked-group.png" alt="Stacked group" loading="lazy" />
               </a>
               <div class="meta">
@@ -1288,7 +1528,7 @@
               </div>
             </article>
             <article class="card" data-level0="Ui" data-level1="Ios notification">
-              <a href="./ui--ios-notification--whats-app-on-dark.png" class="card-image-link" title="Whats app on dark — full-size preview">
+              <a href="./ui--ios-notification--whats-app-on-dark.png" class="card-image-link" data-storyid="ui--ios-notification--whats-app-on-dark" title="Whats app on dark — open preview">
                 <img class="shot" src="./ui--ios-notification--whats-app-on-dark.png" alt="Whats app on dark" loading="lazy" />
               </a>
               <div class="meta">
@@ -1300,7 +1540,7 @@
               </div>
             </article></div></section><section class="group" data-group="Foundation"><h2>Foundation <span class="count">4</span></h2><div class="grid">
             <article class="card" data-level0="Foundation" data-level1="Typography">
-              <a href="./foundation--typography--sans-vs-mono.png" class="card-image-link" title="Sans vs mono — full-size preview">
+              <a href="./foundation--typography--sans-vs-mono.png" class="card-image-link" data-storyid="foundation--typography--sans-vs-mono" title="Sans vs mono — open preview">
                 <img class="shot" src="./foundation--typography--sans-vs-mono.png" alt="Sans vs mono" loading="lazy" />
               </a>
               <div class="meta">
@@ -1312,7 +1552,7 @@
               </div>
             </article>
             <article class="card" data-level0="Foundation" data-level1="Typography">
-              <a href="./foundation--typography--tracking-demo.png" class="card-image-link" title="Tracking demo — full-size preview">
+              <a href="./foundation--typography--tracking-demo.png" class="card-image-link" data-storyid="foundation--typography--tracking-demo" title="Tracking demo — open preview">
                 <img class="shot" src="./foundation--typography--tracking-demo.png" alt="Tracking demo" loading="lazy" />
               </a>
               <div class="meta">
@@ -1324,7 +1564,7 @@
               </div>
             </article>
             <article class="card" data-level0="Foundation" data-level1="Typography">
-              <a href="./foundation--typography--type-scale.png" class="card-image-link" title="Type scale — full-size preview">
+              <a href="./foundation--typography--type-scale.png" class="card-image-link" data-storyid="foundation--typography--type-scale" title="Type scale — open preview">
                 <img class="shot" src="./foundation--typography--type-scale.png" alt="Type scale" loading="lazy" />
               </a>
               <div class="meta">
@@ -1336,7 +1576,7 @@
               </div>
             </article>
             <article class="card" data-level0="Foundation" data-level1="Typography">
-              <a href="./foundation--typography--weights.png" class="card-image-link" title="Weights — full-size preview">
+              <a href="./foundation--typography--weights.png" class="card-image-link" data-storyid="foundation--typography--weights" title="Weights — open preview">
                 <img class="shot" src="./foundation--typography--weights.png" alt="Weights" loading="lazy" />
               </a>
               <div class="meta">
@@ -1348,7 +1588,7 @@
               </div>
             </article></div></section><section class="group" data-group="Screens"><h2>Screens <span class="count">23</span></h2><div class="grid">
             <article class="card" data-level0="Screens" data-level1="Email inbox">
-              <a href="./screens--email-inbox--full-inbox.png" class="card-image-link" title="Full inbox — full-size preview">
+              <a href="./screens--email-inbox--full-inbox.png" class="card-image-link" data-storyid="screens--email-inbox--full-inbox" title="Full inbox — open preview">
                 <img class="shot" src="./screens--email-inbox--full-inbox.png" alt="Full inbox" loading="lazy" />
               </a>
               <div class="meta">
@@ -1360,7 +1600,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Email inbox">
-              <a href="./screens--email-inbox--highlighted-lead.png" class="card-image-link" title="Highlighted lead — full-size preview">
+              <a href="./screens--email-inbox--highlighted-lead.png" class="card-image-link" data-storyid="screens--email-inbox--highlighted-lead" title="Highlighted lead — open preview">
                 <img class="shot" src="./screens--email-inbox--highlighted-lead.png" alt="Highlighted lead" loading="lazy" />
               </a>
               <div class="meta">
@@ -1372,7 +1612,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Email inbox">
-              <a href="./screens--email-inbox--standalone.png" class="card-image-link" title="Standalone — full-size preview">
+              <a href="./screens--email-inbox--standalone.png" class="card-image-link" data-storyid="screens--email-inbox--standalone" title="Standalone — open preview">
                 <img class="shot" src="./screens--email-inbox--standalone.png" alt="Standalone" loading="lazy" />
               </a>
               <div class="meta">
@@ -1384,7 +1624,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Email inbox">
-              <a href="./screens--email-inbox--unread-only.png" class="card-image-link" title="Unread only — full-size preview">
+              <a href="./screens--email-inbox--unread-only.png" class="card-image-link" data-storyid="screens--email-inbox--unread-only" title="Unread only — open preview">
                 <img class="shot" src="./screens--email-inbox--unread-only.png" alt="Unread only" loading="lazy" />
               </a>
               <div class="meta">
@@ -1396,7 +1636,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Email inbox">
-              <a href="./screens--email-inbox--with-filters.png" class="card-image-link" title="With filters — full-size preview">
+              <a href="./screens--email-inbox--with-filters.png" class="card-image-link" data-storyid="screens--email-inbox--with-filters" title="With filters — open preview">
                 <img class="shot" src="./screens--email-inbox--with-filters.png" alt="With filters" loading="lazy" />
               </a>
               <div class="meta">
@@ -1408,7 +1648,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Email inbox">
-              <a href="./screens--email-inbox--with-search.png" class="card-image-link" title="With search — full-size preview">
+              <a href="./screens--email-inbox--with-search.png" class="card-image-link" data-storyid="screens--email-inbox--with-search" title="With search — open preview">
                 <img class="shot" src="./screens--email-inbox--with-search.png" alt="With search" loading="lazy" />
               </a>
               <div class="meta">
@@ -1420,7 +1660,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Instagram profile">
-              <a href="./screens--instagram-profile--anfragenfluss-profile.png" class="card-image-link" title="Anfragenfluss profile — full-size preview">
+              <a href="./screens--instagram-profile--anfragenfluss-profile.png" class="card-image-link" data-storyid="screens--instagram-profile--anfragenfluss-profile" title="Anfragenfluss profile — open preview">
                 <img class="shot" src="./screens--instagram-profile--anfragenfluss-profile.png" alt="Anfragenfluss profile" loading="lazy" />
               </a>
               <div class="meta">
@@ -1432,7 +1672,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Instagram profile">
-              <a href="./screens--instagram-profile--reels-tab-active.png" class="card-image-link" title="Reels tab active — full-size preview">
+              <a href="./screens--instagram-profile--reels-tab-active.png" class="card-image-link" data-storyid="screens--instagram-profile--reels-tab-active" title="Reels tab active — open preview">
                 <img class="shot" src="./screens--instagram-profile--reels-tab-active.png" alt="Reels tab active" loading="lazy" />
               </a>
               <div class="meta">
@@ -1444,7 +1684,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Instagram profile">
-              <a href="./screens--instagram-profile--small-account.png" class="card-image-link" title="Small account — full-size preview">
+              <a href="./screens--instagram-profile--small-account.png" class="card-image-link" data-storyid="screens--instagram-profile--small-account" title="Small account — open preview">
                 <img class="shot" src="./screens--instagram-profile--small-account.png" alt="Small account" loading="lazy" />
               </a>
               <div class="meta">
@@ -1456,7 +1696,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Instagram profile">
-              <a href="./screens--instagram-profile--standalone.png" class="card-image-link" title="Standalone — full-size preview">
+              <a href="./screens--instagram-profile--standalone.png" class="card-image-link" data-storyid="screens--instagram-profile--standalone" title="Standalone — open preview">
                 <img class="shot" src="./screens--instagram-profile--standalone.png" alt="Standalone" loading="lazy" />
               </a>
               <div class="meta">
@@ -1468,7 +1708,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Instagram profile">
-              <a href="./screens--instagram-profile--viewing-other-profile.png" class="card-image-link" title="Viewing other profile — full-size preview">
+              <a href="./screens--instagram-profile--viewing-other-profile.png" class="card-image-link" data-storyid="screens--instagram-profile--viewing-other-profile" title="Viewing other profile — open preview">
                 <img class="shot" src="./screens--instagram-profile--viewing-other-profile.png" alt="Viewing other profile" loading="lazy" />
               </a>
               <div class="meta">
@@ -1480,7 +1720,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Reels feed">
-              <a href="./screens--reels-feed--anfragenfluss-reel.png" class="card-image-link" title="Anfragenfluss reel — full-size preview">
+              <a href="./screens--reels-feed--anfragenfluss-reel.png" class="card-image-link" data-storyid="screens--reels-feed--anfragenfluss-reel" title="Anfragenfluss reel — open preview">
                 <img class="shot" src="./screens--reels-feed--anfragenfluss-reel.png" alt="Anfragenfluss reel" loading="lazy" />
               </a>
               <div class="meta">
@@ -1492,7 +1732,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Reels feed">
-              <a href="./screens--reels-feed--high-engagement.png" class="card-image-link" title="High engagement — full-size preview">
+              <a href="./screens--reels-feed--high-engagement.png" class="card-image-link" data-storyid="screens--reels-feed--high-engagement" title="High engagement — open preview">
                 <img class="shot" src="./screens--reels-feed--high-engagement.png" alt="High engagement" loading="lazy" />
               </a>
               <div class="meta">
@@ -1504,7 +1744,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Reels feed">
-              <a href="./screens--reels-feed--liked-and-saved.png" class="card-image-link" title="Liked and saved — full-size preview">
+              <a href="./screens--reels-feed--liked-and-saved.png" class="card-image-link" data-storyid="screens--reels-feed--liked-and-saved" title="Liked and saved — open preview">
                 <img class="shot" src="./screens--reels-feed--liked-and-saved.png" alt="Liked and saved" loading="lazy" />
               </a>
               <div class="meta">
@@ -1516,7 +1756,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Reels feed">
-              <a href="./screens--reels-feed--minimal.png" class="card-image-link" title="Minimal — full-size preview">
+              <a href="./screens--reels-feed--minimal.png" class="card-image-link" data-storyid="screens--reels-feed--minimal" title="Minimal — open preview">
                 <img class="shot" src="./screens--reels-feed--minimal.png" alt="Minimal" loading="lazy" />
               </a>
               <div class="meta">
@@ -1528,7 +1768,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Reels feed">
-              <a href="./screens--reels-feed--standalone.png" class="card-image-link" title="Standalone — full-size preview">
+              <a href="./screens--reels-feed--standalone.png" class="card-image-link" data-storyid="screens--reels-feed--standalone" title="Standalone — open preview">
                 <img class="shot" src="./screens--reels-feed--standalone.png" alt="Standalone" loading="lazy" />
               </a>
               <div class="meta">
@@ -1540,7 +1780,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Reels feed">
-              <a href="./screens--reels-feed--with-image-media.png" class="card-image-link" title="With image media — full-size preview">
+              <a href="./screens--reels-feed--with-image-media.png" class="card-image-link" data-storyid="screens--reels-feed--with-image-media" title="With image media — open preview">
                 <img class="shot" src="./screens--reels-feed--with-image-media.png" alt="With image media" loading="lazy" />
               </a>
               <div class="meta">
@@ -1552,7 +1792,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Whatsapp chat">
-              <a href="./screens--whatsapp-chat--inside-chassis.png" class="card-image-link" title="Inside chassis — full-size preview">
+              <a href="./screens--whatsapp-chat--inside-chassis.png" class="card-image-link" data-storyid="screens--whatsapp-chat--inside-chassis" title="Inside chassis — open preview">
                 <img class="shot" src="./screens--whatsapp-chat--inside-chassis.png" alt="Inside chassis" loading="lazy" />
               </a>
               <div class="meta">
@@ -1564,7 +1804,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Whatsapp chat">
-              <a href="./screens--whatsapp-chat--long-conversation.png" class="card-image-link" title="Long conversation — full-size preview">
+              <a href="./screens--whatsapp-chat--long-conversation.png" class="card-image-link" data-storyid="screens--whatsapp-chat--long-conversation" title="Long conversation — open preview">
                 <img class="shot" src="./screens--whatsapp-chat--long-conversation.png" alt="Long conversation" loading="lazy" />
               </a>
               <div class="meta">
@@ -1576,7 +1816,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Whatsapp chat">
-              <a href="./screens--whatsapp-chat--receipt-states.png" class="card-image-link" title="Receipt states — full-size preview">
+              <a href="./screens--whatsapp-chat--receipt-states.png" class="card-image-link" data-storyid="screens--whatsapp-chat--receipt-states" title="Receipt states — open preview">
                 <img class="shot" src="./screens--whatsapp-chat--receipt-states.png" alt="Receipt states" loading="lazy" />
               </a>
               <div class="meta">
@@ -1588,7 +1828,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Whatsapp chat">
-              <a href="./screens--whatsapp-chat--standalone.png" class="card-image-link" title="Standalone — full-size preview">
+              <a href="./screens--whatsapp-chat--standalone.png" class="card-image-link" data-storyid="screens--whatsapp-chat--standalone" title="Standalone — open preview">
                 <img class="shot" src="./screens--whatsapp-chat--standalone.png" alt="Standalone" loading="lazy" />
               </a>
               <div class="meta">
@@ -1600,7 +1840,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Whatsapp chat">
-              <a href="./screens--whatsapp-chat--with-typing-indicator.png" class="card-image-link" title="With typing indicator — full-size preview">
+              <a href="./screens--whatsapp-chat--with-typing-indicator.png" class="card-image-link" data-storyid="screens--whatsapp-chat--with-typing-indicator" title="With typing indicator — open preview">
                 <img class="shot" src="./screens--whatsapp-chat--with-typing-indicator.png" alt="With typing indicator" loading="lazy" />
               </a>
               <div class="meta">
@@ -1612,7 +1852,7 @@
               </div>
             </article>
             <article class="card" data-level0="Screens" data-level1="Whatsapp chat">
-              <a href="./screens--whatsapp-chat--with-voice-message.png" class="card-image-link" title="With voice message — full-size preview">
+              <a href="./screens--whatsapp-chat--with-voice-message.png" class="card-image-link" data-storyid="screens--whatsapp-chat--with-voice-message" title="With voice message — open preview">
                 <img class="shot" src="./screens--whatsapp-chat--with-voice-message.png" alt="With voice message" loading="lazy" />
               </a>
               <div class="meta">
@@ -1624,7 +1864,7 @@
               </div>
             </article></div></section><section class="group" data-group="Chassis"><h2>Chassis <span class="count">22</span></h2><div class="grid">
             <article class="card" data-level0="Chassis" data-level1="Iphone">
-              <a href="./chassis--iphone--compact.png" class="card-image-link" title="Compact — full-size preview">
+              <a href="./chassis--iphone--compact.png" class="card-image-link" data-storyid="chassis--iphone--compact" title="Compact — open preview">
                 <img class="shot" src="./chassis--iphone--compact.png" alt="Compact" loading="lazy" />
               </a>
               <div class="meta">
@@ -1636,7 +1876,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Iphone">
-              <a href="./chassis--iphone--default.png" class="card-image-link" title="Default — full-size preview">
+              <a href="./chassis--iphone--default.png" class="card-image-link" data-storyid="chassis--iphone--default" title="Default — open preview">
                 <img class="shot" src="./chassis--iphone--default.png" alt="Default" loading="lazy" />
               </a>
               <div class="meta">
@@ -1648,7 +1888,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Iphone">
-              <a href="./chassis--iphone--fluid.png" class="card-image-link" title="Fluid — full-size preview">
+              <a href="./chassis--iphone--fluid.png" class="card-image-link" data-storyid="chassis--iphone--fluid" title="Fluid — open preview">
                 <img class="shot" src="./chassis--iphone--fluid.png" alt="Fluid" loading="lazy" />
               </a>
               <div class="meta">
@@ -1660,7 +1900,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Iphone">
-              <a href="./chassis--iphone--hero.png" class="card-image-link" title="Hero — full-size preview">
+              <a href="./chassis--iphone--hero.png" class="card-image-link" data-storyid="chassis--iphone--hero" title="Hero — open preview">
                 <img class="shot" src="./chassis--iphone--hero.png" alt="Hero" loading="lazy" />
               </a>
               <div class="meta">
@@ -1672,7 +1912,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Iphone">
-              <a href="./chassis--iphone--immersive.png" class="card-image-link" title="Immersive — full-size preview">
+              <a href="./chassis--iphone--immersive.png" class="card-image-link" data-storyid="chassis--iphone--immersive" title="Immersive — open preview">
                 <img class="shot" src="./chassis--iphone--immersive.png" alt="Immersive" loading="lazy" />
               </a>
               <div class="meta">
@@ -1684,7 +1924,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Iphone">
-              <a href="./chassis--iphone--ink-variant.png" class="card-image-link" title="Ink variant — full-size preview">
+              <a href="./chassis--iphone--ink-variant.png" class="card-image-link" data-storyid="chassis--iphone--ink-variant" title="Ink variant — open preview">
                 <img class="shot" src="./chassis--iphone--ink-variant.png" alt="Ink variant" loading="lazy" />
               </a>
               <div class="meta">
@@ -1696,7 +1936,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Iphone">
-              <a href="./chassis--iphone--interactive.png" class="card-image-link" title="Interactive — full-size preview">
+              <a href="./chassis--iphone--interactive.png" class="card-image-link" data-storyid="chassis--iphone--interactive" title="Interactive — open preview">
                 <img class="shot" src="./chassis--iphone--interactive.png" alt="Interactive" loading="lazy" />
               </a>
               <div class="meta">
@@ -1708,7 +1948,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Iphone">
-              <a href="./chassis--iphone--opaque-children.png" class="card-image-link" title="Opaque children — full-size preview">
+              <a href="./chassis--iphone--opaque-children.png" class="card-image-link" data-storyid="chassis--iphone--opaque-children" title="Opaque children — open preview">
                 <img class="shot" src="./chassis--iphone--opaque-children.png" alt="Opaque children" loading="lazy" />
               </a>
               <div class="meta">
@@ -1720,7 +1960,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Iphone">
-              <a href="./chassis--iphone--paper-variant.png" class="card-image-link" title="Paper variant — full-size preview">
+              <a href="./chassis--iphone--paper-variant.png" class="card-image-link" data-storyid="chassis--iphone--paper-variant" title="Paper variant — open preview">
                 <img class="shot" src="./chassis--iphone--paper-variant.png" alt="Paper variant" loading="lazy" />
               </a>
               <div class="meta">
@@ -1732,7 +1972,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Iphone">
-              <a href="./chassis--iphone--wallpaper-dots.png" class="card-image-link" title="Wallpaper dots — full-size preview">
+              <a href="./chassis--iphone--wallpaper-dots.png" class="card-image-link" data-storyid="chassis--iphone--wallpaper-dots" title="Wallpaper dots — open preview">
                 <img class="shot" src="./chassis--iphone--wallpaper-dots.png" alt="Wallpaper dots" loading="lazy" />
               </a>
               <div class="meta">
@@ -1744,7 +1984,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Iphone">
-              <a href="./chassis--iphone--wallpaper-grid.png" class="card-image-link" title="Wallpaper grid — full-size preview">
+              <a href="./chassis--iphone--wallpaper-grid.png" class="card-image-link" data-storyid="chassis--iphone--wallpaper-grid" title="Wallpaper grid — open preview">
                 <img class="shot" src="./chassis--iphone--wallpaper-grid.png" alt="Wallpaper grid" loading="lazy" />
               </a>
               <div class="meta">
@@ -1756,7 +1996,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Iphone">
-              <a href="./chassis--iphone--wallpaper-mesh.png" class="card-image-link" title="Wallpaper mesh — full-size preview">
+              <a href="./chassis--iphone--wallpaper-mesh.png" class="card-image-link" data-storyid="chassis--iphone--wallpaper-mesh" title="Wallpaper mesh — open preview">
                 <img class="shot" src="./chassis--iphone--wallpaper-mesh.png" alt="Wallpaper mesh" loading="lazy" />
               </a>
               <div class="meta">
@@ -1768,7 +2008,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Iphone">
-              <a href="./chassis--iphone--wallpaper-minimal.png" class="card-image-link" title="Wallpaper minimal — full-size preview">
+              <a href="./chassis--iphone--wallpaper-minimal.png" class="card-image-link" data-storyid="chassis--iphone--wallpaper-minimal" title="Wallpaper minimal — open preview">
                 <img class="shot" src="./chassis--iphone--wallpaper-minimal.png" alt="Wallpaper minimal" loading="lazy" />
               </a>
               <div class="meta">
@@ -1780,7 +2020,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Macbook pro">
-              <a href="./chassis--macbook-pro--compact.png" class="card-image-link" title="Compact — full-size preview">
+              <a href="./chassis--macbook-pro--compact.png" class="card-image-link" data-storyid="chassis--macbook-pro--compact" title="Compact — open preview">
                 <img class="shot" src="./chassis--macbook-pro--compact.png" alt="Compact" loading="lazy" />
               </a>
               <div class="meta">
@@ -1792,7 +2032,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Macbook pro">
-              <a href="./chassis--macbook-pro--default.png" class="card-image-link" title="Default — full-size preview">
+              <a href="./chassis--macbook-pro--default.png" class="card-image-link" data-storyid="chassis--macbook-pro--default" title="Default — open preview">
                 <img class="shot" src="./chassis--macbook-pro--default.png" alt="Default" loading="lazy" />
               </a>
               <div class="meta">
@@ -1804,7 +2044,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Macbook pro">
-              <a href="./chassis--macbook-pro--fluid.png" class="card-image-link" title="Fluid — full-size preview">
+              <a href="./chassis--macbook-pro--fluid.png" class="card-image-link" data-storyid="chassis--macbook-pro--fluid" title="Fluid — open preview">
                 <img class="shot" src="./chassis--macbook-pro--fluid.png" alt="Fluid" loading="lazy" />
               </a>
               <div class="meta">
@@ -1816,7 +2056,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Macbook pro">
-              <a href="./chassis--macbook-pro--hero.png" class="card-image-link" title="Hero — full-size preview">
+              <a href="./chassis--macbook-pro--hero.png" class="card-image-link" data-storyid="chassis--macbook-pro--hero" title="Hero — open preview">
                 <img class="shot" src="./chassis--macbook-pro--hero.png" alt="Hero" loading="lazy" />
               </a>
               <div class="meta">
@@ -1828,7 +2068,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Macbook pro">
-              <a href="./chassis--macbook-pro--immersive.png" class="card-image-link" title="Immersive — full-size preview">
+              <a href="./chassis--macbook-pro--immersive.png" class="card-image-link" data-storyid="chassis--macbook-pro--immersive" title="Immersive — open preview">
                 <img class="shot" src="./chassis--macbook-pro--immersive.png" alt="Immersive" loading="lazy" />
               </a>
               <div class="meta">
@@ -1840,7 +2080,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Macbook pro">
-              <a href="./chassis--macbook-pro--interactive.png" class="card-image-link" title="Interactive — full-size preview">
+              <a href="./chassis--macbook-pro--interactive.png" class="card-image-link" data-storyid="chassis--macbook-pro--interactive" title="Interactive — open preview">
                 <img class="shot" src="./chassis--macbook-pro--interactive.png" alt="Interactive" loading="lazy" />
               </a>
               <div class="meta">
@@ -1852,7 +2092,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Macbook pro">
-              <a href="./chassis--macbook-pro--silver.png" class="card-image-link" title="Silver — full-size preview">
+              <a href="./chassis--macbook-pro--silver.png" class="card-image-link" data-storyid="chassis--macbook-pro--silver" title="Silver — open preview">
                 <img class="shot" src="./chassis--macbook-pro--silver.png" alt="Silver" loading="lazy" />
               </a>
               <div class="meta">
@@ -1864,7 +2104,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Macbook pro">
-              <a href="./chassis--macbook-pro--space-gray.png" class="card-image-link" title="Space gray — full-size preview">
+              <a href="./chassis--macbook-pro--space-gray.png" class="card-image-link" data-storyid="chassis--macbook-pro--space-gray" title="Space gray — open preview">
                 <img class="shot" src="./chassis--macbook-pro--space-gray.png" alt="Space gray" loading="lazy" />
               </a>
               <div class="meta">
@@ -1876,7 +2116,7 @@
               </div>
             </article>
             <article class="card" data-level0="Chassis" data-level1="Macbook pro">
-              <a href="./chassis--macbook-pro--with-dashboard.png" class="card-image-link" title="With dashboard — full-size preview">
+              <a href="./chassis--macbook-pro--with-dashboard.png" class="card-image-link" data-storyid="chassis--macbook-pro--with-dashboard" title="With dashboard — open preview">
                 <img class="shot" src="./chassis--macbook-pro--with-dashboard.png" alt="With dashboard" loading="lazy" />
               </a>
               <div class="meta">
@@ -1899,7 +2139,7 @@
           <span>Anfragenfluss · Werkschau · v0.1</span>
         </div>
         <div class="footer-meta" style="color:var(--cloud-text-muted)">
-          <span>Captured 2026-05-16_18-33-25</span>
+          <span>Captured 2026-05-16_18-48-11</span>
           <span>·</span>
           <span><code style="background:var(--cloud-surface-muted);color:var(--cloud-text-muted)">npm run contact-sheet</code></span>
         </div>
@@ -1907,6 +2147,147 @@
     </footer>
   </main>
 </div>
+
+<!-- ─── In-page lightbox modal — opened by card click, contains big image + variant browser ─── -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+  <button type="button" class="lightbox-back" data-lb-close="true" aria-label="Zurück zur Werkschau">
+    <span aria-hidden="true">←</span>
+    <span>Werkschau</span>
+  </button>
+  <button type="button" class="lightbox-close" data-lb-close="true" aria-label="Schließen">×</button>
+
+  <div class="lightbox-frame">
+    <div class="lightbox-image-wrap">
+      <img class="lightbox-img" id="lb-img" alt="" />
+    </div>
+    <div class="lightbox-meta">
+      <div>
+        <div class="lb-title" id="lb-title"></div>
+        <div class="lb-sub" id="lb-sub"></div>
+      </div>
+      <code class="lb-id" id="lb-id"></code>
+    </div>
+    <aside class="lightbox-variants">
+      <div class="lightbox-variants-header">
+        <div class="lb-section-label">Varianten</div>
+        <div class="lb-component-name" id="lb-component-name"></div>
+      </div>
+      <ul class="lb-variant-list" id="lb-variant-list"></ul>
+    </aside>
+  </div>
+</div>
+
+<script>
+// Story data embedded for lightbox variant navigation. Built server-side so
+// JS doesn't need to fetch — fully self-contained, works offline.
+window.__AF_WERKSCHAU_STORIES__ = [{"storyId":"ui--ios-notification--gmail-on-dark","name":"Gmail on dark","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--gmail-on-dark.png","ok":true},{"storyId":"ui--ios-notification--interactive","name":"Interactive","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--interactive.png","ok":true},{"storyId":"ui--ios-notification--on-light-backdrop","name":"On light backdrop","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--on-light-backdrop.png","ok":true},{"storyId":"ui--ios-notification--stacked-group","name":"Stacked group","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--stacked-group.png","ok":true},{"storyId":"ui--ios-notification--whats-app-on-dark","name":"Whats app on dark","levels":["Ui","Ios notification"],"filename":"ui--ios-notification--whats-app-on-dark.png","ok":true},{"storyId":"foundation--typography--sans-vs-mono","name":"Sans vs mono","levels":["Foundation","Typography"],"filename":"foundation--typography--sans-vs-mono.png","ok":true},{"storyId":"foundation--typography--tracking-demo","name":"Tracking demo","levels":["Foundation","Typography"],"filename":"foundation--typography--tracking-demo.png","ok":true},{"storyId":"foundation--typography--type-scale","name":"Type scale","levels":["Foundation","Typography"],"filename":"foundation--typography--type-scale.png","ok":true},{"storyId":"foundation--typography--weights","name":"Weights","levels":["Foundation","Typography"],"filename":"foundation--typography--weights.png","ok":true},{"storyId":"screens--email-inbox--full-inbox","name":"Full inbox","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--full-inbox.png","ok":true},{"storyId":"screens--email-inbox--highlighted-lead","name":"Highlighted lead","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--highlighted-lead.png","ok":true},{"storyId":"screens--email-inbox--standalone","name":"Standalone","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--standalone.png","ok":true},{"storyId":"screens--email-inbox--unread-only","name":"Unread only","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--unread-only.png","ok":true},{"storyId":"screens--email-inbox--with-filters","name":"With filters","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--with-filters.png","ok":true},{"storyId":"screens--email-inbox--with-search","name":"With search","levels":["Screens","Email inbox"],"filename":"screens--email-inbox--with-search.png","ok":true},{"storyId":"screens--instagram-profile--anfragenfluss-profile","name":"Anfragenfluss profile","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--anfragenfluss-profile.png","ok":true},{"storyId":"screens--instagram-profile--reels-tab-active","name":"Reels tab active","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--reels-tab-active.png","ok":true},{"storyId":"screens--instagram-profile--small-account","name":"Small account","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--small-account.png","ok":true},{"storyId":"screens--instagram-profile--standalone","name":"Standalone","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--standalone.png","ok":true},{"storyId":"screens--instagram-profile--viewing-other-profile","name":"Viewing other profile","levels":["Screens","Instagram profile"],"filename":"screens--instagram-profile--viewing-other-profile.png","ok":true},{"storyId":"chassis--iphone--compact","name":"Compact","levels":["Chassis","Iphone"],"filename":"chassis--iphone--compact.png","ok":true},{"storyId":"chassis--iphone--default","name":"Default","levels":["Chassis","Iphone"],"filename":"chassis--iphone--default.png","ok":true},{"storyId":"chassis--iphone--fluid","name":"Fluid","levels":["Chassis","Iphone"],"filename":"chassis--iphone--fluid.png","ok":true},{"storyId":"chassis--iphone--hero","name":"Hero","levels":["Chassis","Iphone"],"filename":"chassis--iphone--hero.png","ok":true},{"storyId":"chassis--iphone--immersive","name":"Immersive","levels":["Chassis","Iphone"],"filename":"chassis--iphone--immersive.png","ok":true},{"storyId":"chassis--iphone--ink-variant","name":"Ink variant","levels":["Chassis","Iphone"],"filename":"chassis--iphone--ink-variant.png","ok":true},{"storyId":"chassis--iphone--interactive","name":"Interactive","levels":["Chassis","Iphone"],"filename":"chassis--iphone--interactive.png","ok":true},{"storyId":"chassis--iphone--opaque-children","name":"Opaque children","levels":["Chassis","Iphone"],"filename":"chassis--iphone--opaque-children.png","ok":true},{"storyId":"chassis--iphone--paper-variant","name":"Paper variant","levels":["Chassis","Iphone"],"filename":"chassis--iphone--paper-variant.png","ok":true},{"storyId":"chassis--iphone--wallpaper-dots","name":"Wallpaper dots","levels":["Chassis","Iphone"],"filename":"chassis--iphone--wallpaper-dots.png","ok":true},{"storyId":"chassis--iphone--wallpaper-grid","name":"Wallpaper grid","levels":["Chassis","Iphone"],"filename":"chassis--iphone--wallpaper-grid.png","ok":true},{"storyId":"chassis--iphone--wallpaper-mesh","name":"Wallpaper mesh","levels":["Chassis","Iphone"],"filename":"chassis--iphone--wallpaper-mesh.png","ok":true},{"storyId":"chassis--iphone--wallpaper-minimal","name":"Wallpaper minimal","levels":["Chassis","Iphone"],"filename":"chassis--iphone--wallpaper-minimal.png","ok":true},{"storyId":"chassis--macbook-pro--compact","name":"Compact","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--compact.png","ok":true},{"storyId":"chassis--macbook-pro--default","name":"Default","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--default.png","ok":true},{"storyId":"chassis--macbook-pro--fluid","name":"Fluid","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--fluid.png","ok":true},{"storyId":"chassis--macbook-pro--hero","name":"Hero","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--hero.png","ok":true},{"storyId":"chassis--macbook-pro--immersive","name":"Immersive","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--immersive.png","ok":true},{"storyId":"chassis--macbook-pro--interactive","name":"Interactive","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--interactive.png","ok":true},{"storyId":"chassis--macbook-pro--silver","name":"Silver","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--silver.png","ok":true},{"storyId":"chassis--macbook-pro--space-gray","name":"Space gray","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--space-gray.png","ok":true},{"storyId":"chassis--macbook-pro--with-dashboard","name":"With dashboard","levels":["Chassis","Macbook pro"],"filename":"chassis--macbook-pro--with-dashboard.png","ok":true},{"storyId":"screens--reels-feed--anfragenfluss-reel","name":"Anfragenfluss reel","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--anfragenfluss-reel.png","ok":true},{"storyId":"screens--reels-feed--high-engagement","name":"High engagement","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--high-engagement.png","ok":true},{"storyId":"screens--reels-feed--liked-and-saved","name":"Liked and saved","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--liked-and-saved.png","ok":true},{"storyId":"screens--reels-feed--minimal","name":"Minimal","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--minimal.png","ok":true},{"storyId":"screens--reels-feed--standalone","name":"Standalone","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--standalone.png","ok":true},{"storyId":"screens--reels-feed--with-image-media","name":"With image media","levels":["Screens","Reels feed"],"filename":"screens--reels-feed--with-image-media.png","ok":true},{"storyId":"screens--whatsapp-chat--inside-chassis","name":"Inside chassis","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--inside-chassis.png","ok":true},{"storyId":"screens--whatsapp-chat--long-conversation","name":"Long conversation","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--long-conversation.png","ok":true},{"storyId":"screens--whatsapp-chat--receipt-states","name":"Receipt states","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--receipt-states.png","ok":true},{"storyId":"screens--whatsapp-chat--standalone","name":"Standalone","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--standalone.png","ok":true},{"storyId":"screens--whatsapp-chat--with-typing-indicator","name":"With typing indicator","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--with-typing-indicator.png","ok":true},{"storyId":"screens--whatsapp-chat--with-voice-message","name":"With voice message","levels":["Screens","Whatsapp chat"],"filename":"screens--whatsapp-chat--with-voice-message.png","ok":true}];
+</script>
+
+<script>
+(function () {
+  // ─── Lightbox modal: open on card click, variant browser in right rail ───
+  const stories = window.__AF_WERKSCHAU_STORIES__ || [];
+  const storyById = Object.fromEntries(stories.map((s) => [s.storyId, s]));
+
+  // Group sibling stories by (level0 + level1) so the right rail shows
+  // all variants of THIS specific component (e.g. all "Chassis › iPhone").
+  const siblingsByKey = {};
+  for (const s of stories) {
+    const key = (s.levels[0] || '') + '|' + (s.levels[1] || '');
+    if (!siblingsByKey[key]) siblingsByKey[key] = [];
+    siblingsByKey[key].push(s);
+  }
+
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lb-img');
+  const lbTitle = document.getElementById('lb-title');
+  const lbSub = document.getElementById('lb-sub');
+  const lbId = document.getElementById('lb-id');
+  const lbList = document.getElementById('lb-variant-list');
+  const lbComponentName = document.getElementById('lb-component-name');
+
+  function openLightbox(storyId) {
+    const s = storyById[storyId];
+    if (!s) return;
+    const key = (s.levels[0] || '') + '|' + (s.levels[1] || '');
+    const sibs = siblingsByKey[key] || [s];
+
+    lbImg.src = './' + s.filename;
+    lbImg.alt = s.name;
+    lbTitle.textContent = s.name;
+    lbSub.textContent = s.levels.join(' › ');
+    lbId.textContent = s.storyId;
+    lbComponentName.textContent = [s.levels[0], s.levels[1]].filter(Boolean).join(' › ') || 'Komponente';
+
+    lbList.innerHTML = sibs.map((v) => {
+      const active = v.storyId === storyId ? 'active' : '';
+      const safeName = v.name.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      return '<li class="lb-variant ' + active + '" data-storyid="' + v.storyId + '">' +
+        '<img src="./' + v.filename + '" alt="" loading="lazy" />' +
+        '<span class="lb-variant-name">' + safeName + '</span>' +
+      '</li>';
+    }).join('');
+
+    lb.classList.add('open');
+    lb.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lb.classList.remove('open');
+    lb.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  // Card-image click → intercept, open modal instead of navigating to PNG
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('.card-image-link');
+    if (link) {
+      e.preventDefault();
+      const storyId = link.dataset.storyid;
+      if (storyId) openLightbox(storyId);
+      return;
+    }
+    // Close button(s) (back + ✕)
+    const closeBtn = e.target.closest('[data-lb-close]');
+    if (closeBtn) {
+      closeLightbox();
+      return;
+    }
+    // Click on backdrop (outside frame) closes too
+    if (e.target === lb) {
+      closeLightbox();
+      return;
+    }
+    // Click on a variant row swaps the image
+    const variantRow = e.target.closest('.lb-variant');
+    if (variantRow) {
+      const storyId = variantRow.dataset.storyid;
+      if (storyId) openLightbox(storyId);
+      return;
+    }
+  });
+
+  // ESC to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lb.classList.contains('open')) closeLightbox();
+    // Arrow keys to navigate variants within the same component
+    if (lb.classList.contains('open') && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+      const currentId = lbId.textContent;
+      const s = storyById[currentId];
+      if (!s) return;
+      const key = (s.levels[0] || '') + '|' + (s.levels[1] || '');
+      const sibs = siblingsByKey[key] || [];
+      const idx = sibs.findIndex((v) => v.storyId === currentId);
+      if (idx < 0) return;
+      const next = e.key === 'ArrowRight'
+        ? sibs[(idx + 1) % sibs.length]
+        : sibs[(idx - 1 + sibs.length) % sibs.length];
+      if (next) openLightbox(next.storyId);
+    }
+  });
+})();
+</script>
 
 <script>
 (function () {
